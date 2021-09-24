@@ -12,10 +12,10 @@ const Data = require("./models/profile.js");
 
 /**
  * Takes an ID and name then creates a profile to save to the database.
- * @param {*} id The ID to find the profile for the user.
- * @param {*} name The name of the user that will be paired with the ID.
+ * @param id The ID to find the profile for the user.
+ * @param name The name of the user that will be paired with the ID.
  */
-async function saveData(id, name){
+ module.exports = function saveData(id, name){
     Data.findOne({
         ID: id
     }, async (err, data) => {
@@ -36,9 +36,8 @@ async function saveData(id, name){
  * Finds the data by comparing the profiles to the ID called and then
  * prints out the data within that profile.
  * @param {*} id The ID to find the profile for the user.
- * @param {*} name The name of the user that will be paired with the ID.
  */
-async function getData(id){
+ module.exports = function getData(id){
     Data.findOne({
         ID: id
     }, async (err, data) => {
@@ -47,12 +46,7 @@ async function getData(id){
         } else if(err){
             console.log("What did you do?");
         } else {
-            console.log(`${data.ID} ${data.name}`);
+            return `${data.ID}, ${data.name}`;
         }
     });
 }
-
-// Test Inputs
-// saveData(1230, "Test User")
-// getData(1230)
-
