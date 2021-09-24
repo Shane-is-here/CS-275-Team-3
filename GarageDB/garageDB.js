@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const key = require("../keys.json");
+const key = require("./keys.json");
 
 // CONNECT TO DATABASE
 mongoose.connect(key.mongoPass, {
