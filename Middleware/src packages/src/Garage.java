@@ -26,6 +26,7 @@ public class Garage {
     private int _floors;
     private  Map<String, Integer> _garageMap = new HashMap<>();
     private DBInterface dbInterface = new DBInterface();
+    private int car_count;
     
     public Garage (int floors, int spots){
         
@@ -161,7 +162,7 @@ public class Garage {
             // -- we set the spot in the user class
             p.setSpot(userSpot);
             // -- and send the user info to the database
-           
+            car_count++;
             sendToDB(p);
             
         }
@@ -185,7 +186,7 @@ public class Garage {
             // -- we set the spot in the user class
             p.setSpot(userSpot);
             // -- and send the user info to the database
-           
+            car_count++;
             sendToDB(p);
             
         }
@@ -220,10 +221,10 @@ public class Garage {
         
         // -- if they arent a long term user, they are a daily user
         else{
-        // -- we stil get the information from the DB and 
+        // -- we still get the information from the DB and 
              Daily p = dbInterface.getDaily(id);
              String userSpot = p.getSpot() ;
-            
+            car_count--;
             _garageMap.put(userSpot, 0);
         }
         
