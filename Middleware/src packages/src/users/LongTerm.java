@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -18,9 +18,10 @@ public class LongTerm extends User implements Chargable{
     // String containing the user's password
     private String password;
     // Double containing the user's credit card number
-    private double paymentInfo;
+    private String paymentInfo;
     // String containing the user's phone number
     private String phoneNumber;
+    
     
     /**
      * Constructor for the LongTerm class; utilizes the User superclass
@@ -117,6 +118,17 @@ public class LongTerm extends User implements Chargable{
     }
     
     /**
+     * This method gets the password as set by the user
+     * we will have to figure out a more elegant solution as this is a 
+     * security nightmare
+     */
+    public String getPassword(){
+        
+        String toReturn = this.password;
+        return toReturn;
+    }
+    
+    /**
      * Method to set the user's phone number. Must be a string in the format
      * XXX-XXX-XXXX
      * Will add functionality to check if the number's format is correct
@@ -131,6 +143,37 @@ public class LongTerm extends User implements Chargable{
             System.out.println("You have entered an invalid phone number.");
         }
         
+    }
+    
+    /**
+     * Method to set the user's payment info. Must be a string in the format
+     * XXXX-XXXX-XXXX-XXXX
+     * Will add functionality to check if the number's format is correct
+     * @param paymentInfo String containing the paymentInfo to be set to this account
+     */
+    public void setPaymentInfo(String paymentInfo){
+       this.paymentInfo = paymentInfo;
+        
+        System.out.println("Payment info set!");
+    }
+    
+    /**
+     * Method to get payment info of the user
+     * @return A String containing the user's payment info in the format
+     * XXXX-XXXX-XXXX-XXXX
+     */
+    public String getPaymentInfo(){
+        String toReturn = this.paymentInfo;
+        return toReturn;
+    }
+    
+    /**
+     * Returns the email as set by the user
+     * @return 
+     */
+    public String getEmail(){
+        String toReturn = this.email;
+        return toReturn;
     }
     
     /**
