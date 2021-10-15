@@ -28,8 +28,10 @@ public class DBInterface {
         String spotToSave = p.getSpot();
         String timeInToSave = p.getTimeIn();
         String userType = "longTerm";
+        String paymentInfo = p.getPaymentInfo();
+        String password = p.getPassword();
         
-        
+        // -- our return value will be whether or not the save is successful
         return true;
     }
     
@@ -44,12 +46,16 @@ public class DBInterface {
      * @return the return is whether or not the method went through
      */
     public boolean saveUser(Daily p){
+        String emailToSave = "";
         int idToSave = p.getID();
-        String emailToSave =  "";
         String phoneToSave = "";
-        String spotToSave = "";
+        String spotToSave =p.getSpot();
         String timeInToSave = p.getTimeIn();
         String userType = "daily";
+        String paymentInfo = "";
+        String password = "";
+        
+        // -- our return value will be whether or not the save is successful
         return true;
         
         // -- the next thing is the method that that will be used to get the 
@@ -63,13 +69,16 @@ public class DBInterface {
      */
     public boolean saveGarageSpots(Map<String, Integer> _garageMap){
         
-        // -- we save the map into the Database
+        // -- we save the map into the Database, likely by deconstructing it
         
+        
+        // -- our return value will be whether or not the save is successful
         return true;
     }
     
     /**
-     * we get the hashmap from the database
+     * we get the hashmap from the database, and then we will return it 
+     * likely in here will will also have to rebuild it 
      * @return 
      */
     public Map<String, Integer> getGarageSpots(){
@@ -79,12 +88,28 @@ public class DBInterface {
         
     }
     
-    
+    /**
+     * we get all of the information relevant to the long term user
+     * and we then create a "new" user with all of the information of the user 
+     * being called
+     * 
+     * 
+     * @param id
+     * @return 
+     */
     public LongTerm getLongTerm(int id){
         LongTerm p = new LongTerm(id,"Jacob");
         return p;
     }
    
+    /**
+     *  we get all of the information relevant to the long term user
+     * and we then create a "new" user with all of the information of the user 
+     * being called
+     * 
+     * @param id
+     * @return 
+     */
     public Daily getDaily(int id){
         Daily p = new Daily(id,"Jacob");
         return p;
