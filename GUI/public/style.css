@@ -29,6 +29,8 @@ img {
   height: 80vh;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(180%) blur(10px);
+  -moz-backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   padding: 10px;
@@ -47,6 +49,7 @@ h1 {
   position: relative;
   height: 70%;
   width: inherit;
+  display: flex;
 }
 .flex {
   display: flex;
@@ -138,6 +141,8 @@ button {
   height: 500px;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(180%) blur(10px);
+  -moz-backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   z-index: 1;
@@ -269,10 +274,16 @@ ul {
 }
 .side-by-side {
   float: left;
-  width: 33%;
-  min-width: 33%;
   display: inline-block;
   padding: 0 10px 0 10px;
+}
+.third {
+  width: 33%;
+  min-width: 33%;
+}
+.half {
+  width: 50%;
+  min-width: 50%;
 }
 #sec,
 #exp {
