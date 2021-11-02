@@ -25,10 +25,11 @@ public class LongTerm extends User implements Chargable{
     /**
      * Constructor for the LongTerm class; utilizes the User superclass
      * @param userID Int containing the user's ID
-     * @param name
+     * @param firstName String containing the user's first name
+     * @param lastName String containing the user's last name
      */
-    public LongTerm(int userID, String name){
-        super(userID, name);
+    public LongTerm(int userID, String firstName, String lastName){
+        super(userID, firstName, lastName);
     }
     
     @Override
