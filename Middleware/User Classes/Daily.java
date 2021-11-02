@@ -15,9 +15,11 @@ public class Daily extends User implements Chargable{
     /**
      * Constructor for the Daily class; utilizes the User superclass
      * @param userID Int containing the ID number of the user
+     * @param firstName String containing the user's first name
+     * @param lastName String containing the user's last name
      */
-    public Daily(int userID, String name){
-        super(userID, name);
+    public Daily(int userID, String firstName, String lastName){
+        super(userID, firstName, lastName);
     }
     
     /**
