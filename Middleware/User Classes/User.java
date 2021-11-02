@@ -23,7 +23,8 @@ public class User {
     /**
      * Constructor for the User class
      * @param userID Integer containing the identification number of the user
-     * @param name String containing the first and last name of the user
+     * @param firstName String containing the user's first name
+     * @param lastName String containing the user's last name
      */
     public User(int userID, String firstName, String lastName){
         this.userID = userID;
