@@ -180,6 +180,10 @@ public class GUItoJava {
                     password = value;
                     break;
                     
+                case "email":
+                    email = value;
+                    break;
+                    
                 case "cnum":
                     cardNum = value;
                     break;
@@ -226,6 +230,7 @@ public class GUItoJava {
                 String paymentInfo = cardNum + "/" + expiration + "/" + securityCode
                         + "/" + zipCode;
                 longUser.setPaymentInfo(paymentInfo);
+                longUser.setEmail(email);
                 garage.checkIn(longUser);
                 break;
             case "view":
