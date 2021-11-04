@@ -1,13 +1,10 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*; 
 import java.io.*;
 
 public class Database {
 
-  public static void saveFile(String name, String pass, double ID, String creditCardNum, String email, 
-  String timeArrived, String parkingSpot, String phoneNumber, String billingAddress,
-  String term){
+  public static void saveFile(String firstname, String lastname, String pass, String ID, String creditCardNum, String email, 
+  String timeArrived, String parkingSpot, String phoneNumber, String zipcode, String term){
 
     FileWriter fw = null;
     BufferedWriter bw = null;
@@ -19,8 +16,8 @@ public class Database {
       bw = new BufferedWriter(fw);
       pw = new PrintWriter(bw);
 
-      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
-      name,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,billingAddress,term);
+      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+      firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term);
 
       System.out.println("Data Successfully appended into file");
       pw.flush();
@@ -31,8 +28,30 @@ public class Database {
     }
   }
 
+  public static String retrieveData(String ID){
+
+    var data = "";
+    try {
+      File db = new File("database.txt");
+      Scanner myReader = new Scanner(db);
+      while (myReader.hasNextLine()) {
+        data = myReader.nextLine();
+      }
+      myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    String[] dbvalues = data.split("\\,");
+    for(int i)
+
+    return data;
+  }
+
   public static void main(String[] args){
-    saveFile("test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
+    saveFile("test", "test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
+    System.out.print(retrieveData("4444"));
   }
 
   //saveFile("test", "test", 4444, "test", "test", "test", "test", "test", "test", "test");
