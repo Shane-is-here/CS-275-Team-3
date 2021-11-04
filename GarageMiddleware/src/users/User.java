@@ -25,8 +25,10 @@ public class User {
      * @param userID Integer containing the identification number of the user
      * @param name String containing the first and last name of the user
      */
-    public User(int userID, String name){
+    public User(int userID, String firstName, String lastName){
         this.userID = userID;
+        this.firstName = firstName;
+        this.lastName = lastName;
         
     }
     
@@ -96,6 +98,38 @@ public class User {
     public void setTimeOut(String timeOut){
         this.timeOut = timeOut;
         System.out.println("Time Out set!");
+    }
+    
+    /**
+     * Method to set/change the user's first name
+     * @param firstName String containing the user's first name
+     */
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+    
+    /**
+     * Method to get the user's first name
+     * @return A String containing the user's first name
+     */
+    public String getFirstName(){
+        return firstName;
+    }
+    
+    /**
+     * Set/change the user's last name
+     * @param lastName String containing the user's last name
+     */
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+    }
+    
+    /**
+     * Method to get the user's last name
+     * @return A String containing the user's last name
+     */
+    public String getLastName(){
+        return lastName;
     }
     
     public void saveToDB(){

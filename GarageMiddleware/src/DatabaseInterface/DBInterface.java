@@ -98,7 +98,7 @@ public class DBInterface {
      * @return 
      */
     public LongTerm getLongTerm(int id){
-        LongTerm p = new LongTerm(id,"Jacob");
+        LongTerm p = new LongTerm(id,"Jacob", "Dunst");
         return p;
     }
    
@@ -111,7 +111,7 @@ public class DBInterface {
      * @return 
      */
     public Daily getDaily(int id){
-        Daily p = new Daily(id,"Jacob");
+        Daily p = new Daily(id,"Jacob", "Dunst");
         return p;
     }
    

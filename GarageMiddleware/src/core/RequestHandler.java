@@ -2,7 +2,7 @@
 * This class is designed to handle HTTP requests from the GUI and send the 
 * information to the rest of the middleware
 */
-package guitojava;
+package core;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest;

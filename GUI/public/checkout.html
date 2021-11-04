@@ -19,18 +19,18 @@
             <div class="alert-container">
                 <div class="alert">
                     <h2>Thanks For Parking With Us!</h2>
-                    <p>Enjoy your stay</p>
+                    <p>Please come again</p>
                 </div>
                 <div class="alert id">
                     <div class="info">
                         <ul>
                             <li class="name">Full Name: </li>
-                            <li class="phone">Phone Number: </li>
                             <li class="start">Start Time: </li>
+                            <li class="end">End Time: </li>
                         </ul>
                         <div class="spot-container">
-                            <p>Your spot:</p>
-                            <div class="spot"></div>
+                            <p>Payment Due:</p>
+                            <div class="payment"></div>
                         </div>
                         
                     </div>
@@ -55,13 +55,13 @@
                         <input placeholder="Card Number" tabindex="2" type="text" id="cnum" name="cnum" required>
                     </fieldset>
                     <div>
-                        <fieldset class="side-by-side">
+                        <fieldset class="side-by-side third">
                             <input placeholder="Expiration Date" tabindex="3" type="text" id="exp" name="exp" required>
                         </fieldset>
-                        <fieldset class="side-by-side">
+                        <fieldset class="side-by-side third">
                             <input placeholder="Security Code" tabindex="4" type="text" id="sec" name="sec" required>
                         </fieldset>
-                        <fieldset class="side-by-side">
+                        <fieldset class="side-by-side third">
                             <input placeholder="Zip Code" tabindex="5" type="text" id="zip" name="zip" required>
                         </fieldset>
                     </div>
@@ -75,6 +75,79 @@
         </div>
     </div>
     <div class="block"></div>
+    <script>
+        let submit = document.getElementById('submit');
+        let payment = document.querySelector('.payment');
+        let close = document.querySelector('.close');
+        let name = document.querySelector('.name');
+        let start = document.querySelector('.start');
+        let finish = document.querySelector('.finish');
+
+        submit.addEventListener('click', async () => {
+            let id = document.getElementById('id');
+            let cnum = document.getElementById('cnum');
+            let exp = document.getElementById('exp');
+            let sec = document.getElementById('sec');
+            let zip = document.getElementById('zip');
+
+            let block = document.querySelector('.block');
+            let mod = document.querySelector('.modal');
+            let h2 = document.querySelector('.h2');
+            block.style.display = "block";
+            block.style.display = "none";
+            
+            /* Date: YYYY/mm/dd */
+            let d = new Date();
+            let YYYY = d.getFullYear();
+            let mm = d.getMonth();
+            let dd = d.getDay();
+            let hh = d.getHours();
+            let min = d.getMinutes();
+
+            let date_string = YYYY + "/" + mm + "/" + dd;
+            let time = hh + "/" + min;
+
+            const data = {
+                request: "checkout",
+                ID: id.value,
+                cnum: cnum.value,
+                exp: exp.value,
+                sec: sec.value,
+                zip: zip.value,
+                end_time: date_string + '/' + time,
+    
+            };
+
+            post('/api/request', data);
+
+            mod.style.display =  "block";
+
+            payment.innerHTML = "<b>$" + 20 + "</b>";
+            // name.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
+            start.innerHTML = "<b>Start Time: </b>" + date_string + " " + time;
+            finish.innerHTML = "<b>End Time: </b>" + date_string + " " + time;
+            h2.innerHTML = "<b>ID: </b>" + id;
+
+            
+            // finish.innerHTML = "<b>Expected Finish Time: </b>" + "Kevin Hoffman"; 
+        });
+
+        close.addEventListener('click', async () => {
+            let mod = document.querySelector('.modal');
+            mod.style.display = "none";    
+
+            fetch('/api/request?req_num=1')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+    </script>
+    <script src="reqs.js"></script>
     <script src="/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     

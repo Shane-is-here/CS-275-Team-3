@@ -67,7 +67,88 @@
         </div>
     </div>
     <div class="block"></div>
+    <script>
+        let submit = document.getElementById('submit');
+        let spot = document.querySelector('.spot');
+        let close = document.querySelector('.close');
+        let name = document.querySelector('.name');
+        let start = document.querySelector('.start');
+        let finish = document.querySelector('.finish');
+
+        submit.addEventListener('click', async () => {
+            let fname = document.getElementById('fname');
+            let lname = document.getElementById('lname');
+            let pnum = document.getElementById('pnum');
+            let block = document.querySelector('.block');
+            let phone = document.querySelector('.phone');
+            let mod = document.querySelector('.modal');
+            let h2 = document.querySelector('.h2');
+            block.style.display = "block";
+            block.style.display = "none";
+            
+            /* Date: YYYY/mm/dd */
+            let d = new Date();
+            let YYYY = d.getFullYear();
+            let mm = d.getMonth();
+            let dd = d.getDay();
+            let hh = d.getHours();
+            let min = d.getMinutes();
+
+            let date_string = YYYY + "/" + mm + "/" + dd;
+            let time = hh + "/" + min;
+
+            const data = {
+                request: "checkin",
+                first: fname.value,
+                last: lname.value,
+                phone: pnum.value,
+                start_time: date_string + '/' + time,
+                ID: id,
+            };
+
+            post('/api/request', data);
+            
+            current_req = await fetch('/api/current_req');
+            current_req = await current_req.json();
+            current_req = current_req.current_req;
+            console.log(current_req);
+
+            receiving_req = -1
+            while(current_req != -1) {
+                received_data = await fetch('/api/receive?req_num=');
+                received_data = await current_req.json();
+            }
+            var id = Math.floor(Math.random()*100000);
+            mod.style.display =  "block";
+            let spots = ['G14', 'A12', 'C05'];
+            var index = Math.floor(Math.random() * spots.length);
+            spot.innerHTML = spots[index];
+            name.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
+            phone.innerHTML = "<b>Phone Number: </b>" + pnum.value;
+            start.innerHTML = "<b>Start Time: </b>" + date_string + " " + time;
+            h2.innerHTML = "<b>ID: </b>" + id;
+
+            
+            // finish.innerHTML = "<b>Expected Finish Time: </b>" + "Kevin Hoffman"; 
+        });
+
+        close.addEventListener('click', async () => {
+            let mod = document.querySelector('.modal');
+            mod.style.display = "none";    
+
+            fetch('/api/request?req_num=1')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+
+    </script>
     <script src="/script.js"></script>
+    <script src="/reqs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
 </body>
