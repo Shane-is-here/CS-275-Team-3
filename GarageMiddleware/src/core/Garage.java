@@ -56,6 +56,13 @@ public class Garage {
         
     }
     
+    /**
+     * Method to get the map of the garage
+     * @return A Map<String, Integer> of the garage spaces
+     */
+    public Map<String, Integer> getGarageMap(){
+        return this._garageMap;
+    }
     
    /**
     * -- we have a specific key to any floor/spot combination in the entire garage
