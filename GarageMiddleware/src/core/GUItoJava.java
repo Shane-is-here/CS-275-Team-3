@@ -95,6 +95,12 @@ public class GUItoJava {
                 // Send the POST request
                 r.postRequest(requestBody);
                 
+                // Send the map of the garage
+                String garageBody = objectMapper
+                .writeValueAsString(garage.getGarageMap());
+                
+                r.postRequest(garageBody);
+                
             }
             
             
