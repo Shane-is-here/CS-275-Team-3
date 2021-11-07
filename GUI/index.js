@@ -16,6 +16,7 @@ app.post('/api/request', async function (request, response) {
     let data = request.body;
     console.log(data);
     user_request = data
+    user_request.req_num = current_req
     response.status(200).send(data);
 })
 app.get('/api/request', async function (request, response) {
@@ -52,7 +53,12 @@ app.get('/api/receive', async function (request, response) {
     }
     response.send(JSON.stringify(data));
 });
-
+app.get('/api/current_req', async function (request, response) {
+    let data = {
+        current_req: current_req
+    }
+    response.send(JSON.stringify(data));
+});
 
 
 app.listen(3000, () => console.log('listening at 3000'));
