@@ -26,7 +26,7 @@
                         <ul>
                             <li class="name">Full Name: </li>
                             <li class="start">Start Time: </li>
-                            <li class="end">End Time: </li>
+                            <li class="finish">End Time: </li>
                         </ul>
                         <div class="spot-container">
                             <p>Payment Due:</p>
@@ -99,13 +99,12 @@
             /* Date: YYYY/mm/dd */
             let d = new Date();
             let YYYY = d.getFullYear();
-            let mm = d.getMonth();
-            let dd = d.getDay();
+            let mm = d.getMonth() + 1;
+            let dd = d.getDate();
             let hh = d.getHours();
             let min = d.getMinutes();
 
-            let date_string = YYYY + "/" + mm + "/" + dd;
-            let time = hh + "/" + min;
+            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
 
             const data = {
                 request: "checkout",
@@ -114,7 +113,7 @@
                 exp: exp.value,
                 sec: sec.value,
                 zip: zip.value,
-                end_time: date_string + '/' + time,
+                end_time: datetime,
     
             };
 
@@ -124,12 +123,8 @@
 
             payment.innerHTML = "<b>$" + 20 + "</b>";
             // name.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
-            start.innerHTML = "<b>Start Time: </b>" + date_string + " " + time;
-            finish.innerHTML = "<b>End Time: </b>" + date_string + " " + time;
-            h2.innerHTML = "<b>ID: </b>" + id;
-
-            
-            // finish.innerHTML = "<b>Expected Finish Time: </b>" + "Kevin Hoffman"; 
+            start.innerHTML = "<b>Start Time: </b>" + datetime;
+            finish.innerHTML = "<b>End Time: </b>" + mm + "/" + dd + "/" + YYYY + " " + hh + ":" + min;
         });
 
         close.addEventListener('click', async () => {
