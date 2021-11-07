@@ -24,16 +24,15 @@
                 <div class="alert id">
                     <div class="info">
                         <ul>
-                            <li class="name">Full Name: </li>
-                            <li class="phone">Phone Number: </li>
-                            <li class="start">Start Time: </li>
+                            <li class="name-display">Full Name: </li>
+                            <li class="phone-display">Phone Number: </li>
+                            <li class="start-display">Start Time: </li>
                         </ul>
                         <div class="spot-container">
                             <h2 class="h2">ID: </h2>
                             <p>Your spot:</p>
                             <div class="spot"></div>
-                        </div>
-                        
+                        </div>  
                     </div>
                 </div>
             </div>
@@ -71,26 +70,35 @@
         let submit = document.getElementById('submit');
         let spot = document.querySelector('.spot');
         let close = document.querySelector('.close');
-        let name = document.querySelector('.name');
-        let start = document.querySelector('.start');
-        let finish = document.querySelector('.finish');
+
+        // User check block
+        let block = document.querySelector('.block');
+        let mod = document.querySelector('.modal');
+        let h2 = document.querySelector('.h2');
+
+        let name_display = document.querySelector('.name-display');
+        let phone_display = document.querySelector('.phone-display');
+        let start_display = document.querySelector('.start-display');
+        
+        // Form block
+        let pnum = document.getElementById('pnum');
+        let fname = document.getElementById('fname');
+        let lname = document.getElementById('lname');
+
+        pnum.onkeyup = function(e) {
+            phone_number_check(this,e);
+        }
 
         submit.addEventListener('click', async () => {
-            let fname = document.getElementById('fname');
-            let lname = document.getElementById('lname');
-            let pnum = document.getElementById('pnum');
-            let block = document.querySelector('.block');
-            let phone = document.querySelector('.phone');
-            let mod = document.querySelector('.modal');
-            let h2 = document.querySelector('.h2');
+            
             block.style.display = "block";
             block.style.display = "none";
             
             /* Date: YYYY/mm/dd */
             let d = new Date();
             let YYYY = d.getFullYear();
-            let mm = d.getMonth();
-            let dd = d.getDay();
+            let mm = d.getMonth() + 1;
+            let dd = d.getDate();
             let hh = d.getHours();
             let min = d.getMinutes();
 
@@ -114,18 +122,19 @@
             console.log(current_req);
 
             receiving_req = -1
-            while(current_req != -1) {
-                received_data = await fetch('/api/receive?req_num=');
-                received_data = await current_req.json();
-            }
+            // while(current_req != -1) {
+            //     received_data = await fetch('/api/receive?req_num=');
+            //     received_data = await received_data.json();
+            //     current_req = received_data.current_req;
+            // }
             var id = Math.floor(Math.random()*100000);
             mod.style.display =  "block";
             let spots = ['G14', 'A12', 'C05'];
             var index = Math.floor(Math.random() * spots.length);
             spot.innerHTML = spots[index];
-            name.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
-            phone.innerHTML = "<b>Phone Number: </b>" + pnum.value;
-            start.innerHTML = "<b>Start Time: </b>" + date_string + " " + time;
+            name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
+            phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
+            start_display.innerHTML = "<b>Start Time: </b>" + mm + "/" + dd + "/" + YYYY + " " + hh + ":" + min;
             h2.innerHTML = "<b>ID: </b>" + id;
 
             
@@ -150,6 +159,98 @@
     <script src="/script.js"></script>
     <script src="/reqs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+    <script>
+        function phone_formatting(ele,restore) {
+        var new_number,
+            selection_start = ele.selectionStart,
+            selection_end = ele.selectionEnd,
+            number = ele.value.replace(/\D/g,'');
+        
+        // automatically add dashes
+        if (number.length > 2) {
+            // matches: 123 || 123-4 || 123-45
+            new_number = number.substring(0,3) + '-';
+            if (number.length === 4 || number.length === 5) {
+            // matches: 123-4 || 123-45
+            new_number += number.substr(3);
+            }
+            else if (number.length > 5) {
+            // matches: 123-456 || 123-456-7 || 123-456-789
+            new_number += number.substring(3,6) + '-';
+            }
+            if (number.length > 6) {
+            // matches: 123-456-7 || 123-456-789 || 123-456-7890
+            new_number += number.substring(6);
+            }
+        }
+        else {
+            new_number = number;
+        }
+        
+        // if value is heigher than 12, last number is dropped
+        // if inserting a number before the last character, numbers
+        // are shifted right, only 12 characters will show
+        ele.value =  (new_number.length > 12) ? new_number.substring(12,0) : new_number;
+        
+        // restore cursor selection,
+        // prevent it from going to the end
+        // UNLESS
+        // cursor was at the end AND a dash was added
+        document.getElementById('msg').innerHTML='<p>Selection is: ' + selection_end + ' and length is: ' + new_number.length + '</p>';
+        
+        if (new_number.slice(-1) === '-' && restore === false
+            && (new_number.length === 8 && selection_end === 7)
+                || (new_number.length === 4 && selection_end === 3)) {
+            selection_start = new_number.length;
+            selection_end = new_number.length;
+        }
+        else if (restore === 'revert') {
+            selection_start--;
+            selection_end--;
+        }
+        ele.setSelectionRange(selection_start, selection_end);
+
+        }
+        
+        function phone_number_check(field,e) {
+        var key_code = e.keyCode,
+            key_string = String.fromCharCode(key_code),
+            press_delete = false,
+            dash_key = 189,
+            delete_key = [8,46],
+            direction_key = [33,34,35,36,37,38,39,40],
+            selection_end = field.selectionEnd;
+        
+        // delete key was pressed
+        if (delete_key.indexOf(key_code) > -1) {
+            press_delete = true;
+        }
+        
+        // only force formatting is a number or delete key was pressed
+        if (key_string.match(/^\d+$/) || press_delete) {
+            phone_formatting(field,press_delete);
+        }
+        // do nothing for direction keys, keep their default actions
+        else if(direction_key.indexOf(key_code) > -1) {
+            // do nothing
+        }
+        else if(dash_key === key_code) {
+            if (selection_end === field.value.length) {
+            field.value = field.value.slice(0,-1)
+            }
+            else {
+            field.value = field.value.substring(0,(selection_end - 1)) + field.value.substr(selection_end)
+            field.selectionEnd = selection_end - 1;
+            }
+        }
+        // all other non numerical key presses, remove their value
+        else {
+            e.preventDefault();
+        //    field.value = field.value.replace(/[^0-9\-]/g,'')
+            phone_formatting(field,'revert');
+        }
+
+        }
+    </script>
 </body>
 </html>
