@@ -16,7 +16,7 @@ public class Database {
       bw = new BufferedWriter(fw);
       pw = new PrintWriter(bw);
 
-      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n",
       firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term);
 
       System.out.println("Data Successfully appended into file");
@@ -28,14 +28,18 @@ public class Database {
     }
   }
 
+  public static int datalen = 10;
+  public static int idlen = 3;
+
   public static String retrieveData(String ID){
 
-    var data = "";
+    String data = "";
+    String toReturn = "";
     try {
       File db = new File("database.txt");
       Scanner myReader = new Scanner(db);
       while (myReader.hasNextLine()) {
-        data = myReader.nextLine();
+        data += myReader.nextLine();
       }
       myReader.close();
     } catch (FileNotFoundException e) {
@@ -44,23 +48,26 @@ public class Database {
     }
 
     String[] dbvalues = data.split("\\,");
-    for(int i)
+    for(int i = 0; i < dbvalues.length; i += datalen){
+      if(idlen + i < dbvalues.length){
+        String IDBlock = dbvalues[2 + i]; // 2 + i = 3 which is equal to the data len but i needs to increment
+        //System.out.println(IDBlock +" "+ ID);
 
-    return data;
+        if(IDBlock == ID){
+          System.out.println(IDBlock +" "+ ID);
+          for(int j = (idlen*-1); j < datalen; j++){
+            toReturn += dbvalues[2 + i + j];
+          }
+        } else if(i < dbvalues.length && IDBlock != ID){
+          toReturn = null;
+        }
+      }
+    }
+    return toReturn;
   }
 
   public static void main(String[] args){
-    saveFile("test", "test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
-    System.out.print(retrieveData("4444"));
+    // saveFile("test", "test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
+    System.out.println(retrieveData("4444"));
   }
-
-  //saveFile("test", "test", 4444, "test", "test", "test", "test", "test", "test", "test");
-  
 }
-
-/*
-        Database db = new Database();
-        db.saveFile("Jacob", password, idToSave, emailToSave, 
-        timeInToSave, spotToSave, phoneToSave, "2394 Dart Lane",
-        userType);
-*/
