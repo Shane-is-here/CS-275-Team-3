@@ -13,7 +13,7 @@ public class Database {
     
     try {
       
-      fw = new FileWriter("database.txt", true); // sets which file to print to
+      fw = new FileWriter("database.txt", true); // sets which file to print and add to
       bw = new BufferedWriter(fw);
       pw = new PrintWriter(bw);
 
@@ -106,6 +106,7 @@ public class Database {
     return toReturn; // return
   }
 
+  // Used to test functions above
   public static void main(String[] args){
     //saveFile("test", "test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
     //System.out.println(retrieveData("4444"));
