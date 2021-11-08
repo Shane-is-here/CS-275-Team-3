@@ -12,38 +12,15 @@
 </head>
 <body>
     <div class="page">
-        <div class="modal">
-            <div class="close">
-                <img id="close" src="/img/close-svgrepo-com.svg" alt="">
-            </div>
-            <div class="alert-container">
-                <div class="alert">
-                    <h2>Your account has been successfully registered!</h2>
-                </div>
-                <div class="alert id">
-                    <div class="info">
-                        <ul>
-                            <li class="name">Full Name: </li>
-                            <li class="start">Start Time: </li>
-                            <li class="end">End Time: </li>
-                        </ul>
-                        <div class="spot-container">
-                            <p>Payment Due:</p>
-                            <div class="payment"></div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
         <img src="/img/city.jpg" alt="city.jpg">
-        <div class="container">
+        <div class="container" id="login">
             <a href="/index.html">
                 <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
             </a>
             <div class="header">
                 <h1>View account</h1>
                 <p>Please enter the following information</p>
+                <p id="login-false">Username or password not found. Please try again.</p>
             </div>
             <div class="footer">
                 <form class="check-in">
@@ -63,69 +40,93 @@
                 </form>
             </div>
         </div>
+        <div class="container" id="details">
+            <a href="/index.html">
+                <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
+            </a>
+            <div class="header">
+                <h1>Account Details</h1>
+            </div>
+            <div class="footer">
+                <div class="alert id">
+                    <div class="info">
+                        <ul>
+                            <li class="uname"><b>Username</b></li>
+                            <li class="start"><b>Registration Date: </b></li>
+                            <li class="email"><b>Email: </b></li>
+                            <li class="payment"><b>Last 4 digits of Credit Card: </b></li>
+                        </ul>                        
+                    </div>
+                    <div class="spot-container">
+                        <p><b>Your spot:</b></p>
+                        <div id="spot"></div>
+                    </div>  
+                </div>
+            </div>
+        </div>
     </div>
     <div class="block"></div>
     <script>
+        // Load DOM Elements
         let submit = document.getElementById('submit');
         let payment = document.querySelector('.payment');
         let close = document.querySelector('.close');
         let name = document.querySelector('.name');
         let start = document.querySelector('.start');
         let finish = document.querySelector('.finish');
+        let body = document.querySelector('body');
+        let login_false = document.getElementById('login-false');
+        let login = document.getElementById('login');
+        let details = document.getElementById('details');
+        let uname = document.getElementById('uname');
+        let pass = document.getElementById('pass');
+        let block = document.querySelector('.block');
+        let h2 = document.querySelector('.h2');
 
+        // On submit, verify account details. If verified, display account details, otherwise warn user.
         submit.addEventListener('click', async () => {
-            let uname = document.getElementById('uname');
-            let pass = document.getElementById('pass');
-
-            let block = document.querySelector('.block');
-            let mod = document.querySelector('.modal');
-            let h2 = document.querySelector('.h2');
+            // UI details to indicate user must wait
+            body.style.cursor = "wait";
             block.style.display = "block";
-            block.style.display = "none";
+            
             
             /* Date: YYYY/mm/dd */
             let d = new Date();
             let YYYY = d.getFullYear();
-            let mm = d.getMonth();
-            let dd = d.getDay();
+            let mm = d.getMonth() + 1;
+            let dd = d.getDate();
             let hh = d.getHours();
             let min = d.getMinutes();
 
-            let date_string = YYYY + "/" + mm + "/" + dd;
-            let time = hh + "/" + min;
+            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
 
+            // Web request pacakge to post
             const data = {
                 request: "view",
                 uname: uname.value,
                 pass: pass.value,
+                datetime: datetime
             };
 
             post('/api/request', data);
 
-            mod.style.display =  "block";
+            // Receive response from middleware about account details
+            received_data = await wait();
 
-            payment.innerHTML = "<b>$" + 20 + "</b>";
-            // name.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
-            start.innerHTML = "<b>Start Time: </b>" + date_string + " " + time;
-            finish.innerHTML = "<b>End Time: </b>" + date_string + " " + time;
-            h2.innerHTML = "<b>ID: </b>" + id;
-
-            
-            // finish.innerHTML = "<b>Expected Finish Time: </b>" + "Kevin Hoffman"; 
-        });
-
-        close.addEventListener('click', async () => {
-            let mod = document.querySelector('.modal');
-            mod.style.display = "none";    
-
-            fetch('/api/request?req_num=1')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            let verified = false;
+            // If verified account
+            if(verified) {
+                details.style.display = "block";
+                login.style.display = "none";
+                // Populate data
+            }
+            // If not verified account
+            else if(!verified) {
+                login_false.style.display = "block";
+                login_false.style.color = "rgb(255,0,0)";
+            }
+            body.style.cursor = "auto";
+            block.style.display = "none";
         });
 
     </script>
