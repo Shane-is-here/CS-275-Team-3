@@ -4,10 +4,13 @@
  * and open the template in the editor.
  */
 package core;
+
 import users.*;
 import java.util.HashMap;
 import java.util.Map;
 import DatabaseInterface.*;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 /**
  *
  * @author jacob
@@ -26,7 +29,11 @@ public class Garage {
     private int _floors;
     private  Map<String, Integer> _garageMap = new HashMap<>();
     private DBInterface dbInterface = new DBInterface();
-    private int car_count;
+    private static int car_count;
+    
+    private final double HOURLYRATE = 2.00;
+    private final double DAILYRATE = 30;
+    
     
     public Garage (int floors, int spots){
         
@@ -56,13 +63,6 @@ public class Garage {
         
     }
     
-    /**
-     * Method to get the map of the garage
-     * @return A Map<String, Integer> of the garage spaces
-     */
-    public Map<String, Integer> getGarageMap(){
-        return this._garageMap;
-    }
     
    /**
     * -- we have a specific key to any floor/spot combination in the entire garage
@@ -216,13 +216,20 @@ public class Garage {
         // -- this will be determined by getting information from the db
        
         // -- if the user is a long term we will get their information from the 
-        // -- database and call functions 
+        // -- database and call functions
+        
+        boolean toReturn = false;
+        
         if (userType.equals("longTerm")){
             LongTerm p = dbInterface.getLongTerm(id);
             
             // -- this is opening their spot up in the hashmap
             String userSpot = p.getSpot() ;
             _garageMap.put(userSpot, 0);
+            
+            generatePayment(p);
+            
+            toReturn = true;
             
         }
         
@@ -231,15 +238,77 @@ public class Garage {
         // -- we still get the information from the DB and 
              Daily p = dbInterface.getDaily(id);
              String userSpot = p.getSpot() ;
-            car_count--;
             _garageMap.put(userSpot, 0);
+            
+            p.getTimeIn();
+            
+            toReturn = true;
         }
         
+       
+        return toReturn;
         
         
         
-        return  false;
+        
+      
     }
+    
+    
+    
+    private double generatePayment(LongTerm p){
+        
+        String stringInTime = p.getTimeIn();
+        Time toConvert = new Time();
+        double longTermDiscount = 0.75;
+        double owedAmount = 0;
+       
+        DateTime inTime = toConvert.makeNewDateTime(stringInTime);
+        DateTime outTime = toConvert.makeNewDateTime();
+        Period period = new Period(inTime, outTime);
+        double numDays = period.getDays();
+        double numHours = period.getHours();
+        
+        if(numHours < 12){
+            owedAmount = numHours*HOURLYRATE*longTermDiscount;
+        }
+        else {
+            numDays = numDays + 1;
+            
+            owedAmount = numDays*DAILYRATE*longTermDiscount;
+            
+        }
+        
+        return owedAmount;
+    }
+    
+    private double generatePayment(Daily p){
+        
+        String stringInTime = p.getTimeIn();
+        Time toConvert = new Time();
+        double dailyDiscount = 1;
+        double owedAmount = 0;
+       
+        DateTime inTime = toConvert.makeNewDateTime(stringInTime);
+        DateTime outTime = toConvert.makeNewDateTime();
+        Period period = new Period(inTime, outTime);
+        double numDays = period.getDays();
+        double numHours = period.getHours();
+        
+        if(numHours < 12){
+            owedAmount = numHours*HOURLYRATE*dailyDiscount;
+        }
+        else {
+            numDays = numDays + 1;
+            
+            owedAmount = numDays*DAILYRATE*dailyDiscount;
+            
+        }
+        
+        return owedAmount;
+    }
+    
+    
     
     /**
      * We send the information for a LongTerm user into the database interface
@@ -268,12 +337,7 @@ public class Garage {
     
     
     
-    private double generatePayment(User p){
-        p.getTimeIn();
-       
-        
-        return 0;
-    }
+    
     
     public void printOut(){
         String spot;
