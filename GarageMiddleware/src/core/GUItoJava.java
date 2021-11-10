@@ -1,5 +1,5 @@
-
 package core;
+
 import users.*;
 import java.io.IOException;
 import java.util.List;
@@ -20,44 +20,28 @@ public class GUItoJava {
     static Garage garage = new Garage(5, 10);
 
     /**
-     * Code to be put into the parking garage class; contains code to GET and
-     * POST data to/from the GUI. Still a work in progress, but has
-     * functionality.
      *
      * @param args
      */
     public static void main(String[] args) {
-        int j = 0;
+        getRequests();
+
+    }
+
+    /**
+     * Obtains a request from the GUI
+     */
+    public static void getRequests() {
+        // Holds the previous request number from the actual request to prevent
+        // duplicate requests from coming through
+        String prevReqNum = "";
+        // Holds the number of times the program couldn't connect to the site
+        int webErrorCount = 0;
         do {
             String req_num = "";
             try {
-                URL req = new URL("http://localhost:3000/api/current_req");
-                HttpURLConnection req_conn = (HttpURLConnection) req.openConnection();
-                req_conn.setRequestMethod("GET");
-                req_conn.connect();
 
-                int responsecode = req_conn.getResponseCode();
-
-                if (responsecode != 200) {
-                    throw new RuntimeException("HttpResponseCode: " + responsecode);
-                } else {
-
-                    // Reads in data from the GUI
-                    BufferedReader br = new BufferedReader(new InputStreamReader(req_conn.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    // Write the data from the GUI to a string
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-
-                    String[] item = sb.toString().split(":");
-                    // Separate the identifier from the data value
-                    req_num = item[1].substring(0, item[1].length() - 2);
-                    System.out.println(req_num);
-                }
-
+                req_num = findReqNum();
                 // Will need to change the request number each time
                 // TODO -> Create a loop to keep checking for a new request, making
                 // sure that a request is not repeated
@@ -76,7 +60,7 @@ public class GUItoJava {
                 RequestHandler r = new RequestHandler(uri);
 
                 //Getting the response code as verification that the request worked
-                responsecode = conn.getResponseCode();
+                int responsecode = conn.getResponseCode();
 
                 if (responsecode != 200) {
                     throw new RuntimeException("HttpResponseCode: " + responsecode);
@@ -100,11 +84,23 @@ public class GUItoJava {
                     List<String> headers = Arrays.asList(response.split(","));
                     System.out.println(headers);
 
-                    // Use the data from the GUI to interact with the garage and Users
-                    fulfillRequest(headers);
+                    // Pull out the value from "req_num" in the data from the request
+                    int i = headers.size() - 1;
+                    System.out.println(headers.get(i));
+                    String[] items = headers.get(i).split(":");
+                    String curr = items[1];
 
-                    // TODO make this section actually use info from the middleware
-                    // (For testing purposes) Put data into a HashMap to POST to the GUI
+                    // If the request has a different req_num than the previous one,
+                    // process the data and fulfull the request
+                    if (!prevReqNum.equals(curr)) {
+                        // Use the data from the GUI to interact with the garage and Users
+                        fulfillRequest(headers);
+                        // Update the prevReqNum to compare with the next request
+                        prevReqNum = curr;
+                    }
+
+                    /* TODO make this section actually use info from the middleware
+                     (For testing purposes) Put data into a HashMap to POST to the GUI
                     HashMap<String, String> postMap = new HashMap<>();
                     postMap.put("first", "Kevin");
                     postMap.put("last", "Hoffman");
@@ -116,21 +112,68 @@ public class GUItoJava {
 
                     // Send the POST request
                     r.postRequest(requestBody);
-
                     String garageBody = objectMapper
                             .writeValueAsString(garage.getGarageMap());
 
-                    r.postRequest(garageBody);
-
+                    r.postRequest(garageBody);*/
                 }
 
-            } catch (IOException | InterruptedException e) {
-                System.out.println("You probably have the wrong URL bud.");
+            } catch (IOException e) {
+                System.out.println("We ran into an issue with connecting to "
+                        + "the website. Could be the wrong URL or the site is down.");
+                webErrorCount++;
             }
 
-            j++;
-        } while (j < 1);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
 
+            // Will end the loop and stop the program when it cannot connect
+            // to the GUI
+        } while (webErrorCount < 1);
+    }
+
+    /**
+     * Use the current_req api from the GUI to determine the current request
+     * number
+     *
+     * @return req_num String containing the current request number
+     */
+    public static String findReqNum() {
+        String req_num = "";
+        try {
+            URL req = new URL("http://localhost:3000/api/current_req");
+            HttpURLConnection req_conn = (HttpURLConnection) req.openConnection();
+            req_conn.setRequestMethod("GET");
+            req_conn.connect();
+
+            int responsecode = req_conn.getResponseCode();
+
+            if (responsecode != 200) {
+                throw new RuntimeException("HttpResponseCode: " + responsecode);
+            } else {
+
+                // Reads in data from the GUI
+                BufferedReader br = new BufferedReader(new InputStreamReader(req_conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                // Write the data from the GUI to a string
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                String[] item = sb.toString().split(":");
+                // Separate the identifier from the data value
+                req_num = item[1].substring(0, item[1].length() - 2);
+                System.out.println(req_num);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return req_num;
     }
 
     /**
