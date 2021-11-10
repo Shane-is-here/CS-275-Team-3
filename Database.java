@@ -3,30 +3,9 @@ import java.io.*;
 
 public class Database {
 
-  public static void saveFile(String firstname, String lastname, String pass, String ID, String creditCardNum, String email, 
+  public static void lastestSave(String firstname, String lastname, String pass, String ID, String creditCardNum, String email, 
   String timeArrived, String parkingSpot, String phoneNumber, String zipcode, String term){
 
-    // Declare file writer to save data toDB
-    FileWriter fw = null;
-    BufferedWriter bw = null;
-    PrintWriter pw = null;
-    
-    try {
-      
-      fw = new FileWriter("database.txt", true); // sets which file to print and add to
-      bw = new BufferedWriter(fw);
-      pw = new PrintWriter(bw);
-
-      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
-      firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term); // set data
-
-      System.out.println("Data Successfully appended into file"); // confirmation of saving data
-
-    } catch (IOException e) {
-      System.out.println("An error occurred.");
-      e.printStackTrace();
-    }
-    //----------------------------------------------------
     // Save the data but don't overwite. Get latest data set.
 
     // Declare new file writer for latest data save
@@ -52,9 +31,36 @@ public class Database {
       e.printStackTrace();
     }
 
-    // flush both files to end
-    pw.flush();
     pw2.flush();
+  }
+
+  public static void saveFile(String firstname, String lastname, String pass, String ID, String creditCardNum, String email, 
+  String timeArrived, String parkingSpot, String phoneNumber, String zipcode, String term){
+
+    // Declare file writer to save data toDB
+    FileWriter fw = null;
+    BufferedWriter bw = null;
+    PrintWriter pw = null;
+    
+    try {
+      
+      fw = new FileWriter("database.txt", true); // sets which file to print and add to
+      bw = new BufferedWriter(fw);
+      pw = new PrintWriter(bw);
+
+      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
+      firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term); // set data
+
+      lastestSave(firstname, lastname, pass, ID, creditCardNum, email, timeArrived, parkingSpot, phoneNumber, zipcode, term);
+
+      System.out.println("Data Successfully appended into file"); // confirmation of saving data
+
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    pw.flush();
 
   }
 
