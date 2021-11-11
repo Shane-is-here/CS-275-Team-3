@@ -149,9 +149,47 @@ public class Database {
     return toReturn; // return
   }
 
+  public static void garageSaveState(garage){
+
+
+    FileWriter fw2 = null;
+    BufferedWriter bw2 = null;
+    PrintWriter pw2 = null;
+    
+    try {
+      
+      fw2 = new FileWriter("garageSaveState.txt", false);
+      bw2 = new BufferedWriter(fw2);
+      pw2 = new PrintWriter(bw2);
+
+      // Code is the same as database.txt saving code
+      pw2.printf("%s%n",garage);
+
+      System.out.println("Garage data saved.");
+
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    pw2.flush();
+
+
+  }
+
+  public static ArrayList<String> retrieveData(){
+
+    ArrayList<String> toReturn = new ArrayList<String>(); // return value
+
+
+
+
+    return toReturn;
+
+  }
+
   // Used to test functions above
   public static void main(String[] args){
-    saveFile("test", "test", "test", "4444", "test", "test", "test", "test", "test", "test", "test");
-    //System.out.println(retrieveData("4444"));
+    
   }
 }
