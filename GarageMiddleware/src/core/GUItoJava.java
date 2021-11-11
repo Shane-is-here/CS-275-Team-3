@@ -79,25 +79,29 @@ public class GUItoJava {
 
                     // Convert the data obtained from the GUI into a List<String> 
                     String response = sb.toString();
-                    response = response.substring(1);
-                    response = response.substring(0, response.length() - 2);
-                    List<String> headers = Arrays.asList(response.split(","));
-                    System.out.println(headers);
+                    System.out.println(response);
+                    if (!response.equals("{}\n")) {
+                        response = response.substring(1);
+                        response = response.substring(0, response.length() - 2);
+                        List<String> headers = Arrays.asList(response.split(","));
+                        System.out.println(headers);
 
-                    // Pull out the value from "req_num" in the data from the request
-                    int i = headers.size() - 1;
-                    System.out.println(headers.get(i));
-                    String[] items = headers.get(i).split(":");
-                    String curr = items[1];
+                        // Pull out the value from "req_num" in the data from the request
+                        int i = headers.size() - 1;
+                        System.out.println(headers.get(i));
+                        String[] items = headers.get(i).split(":");
+                        String curr = items[1];
 
-                    // If the request has a different req_num than the previous one,
-                    // process the data and fulfull the request
-                    if (!prevReqNum.equals(curr)) {
-                        // Use the data from the GUI to interact with the garage and Users
-                        fulfillRequest(headers);
-                        // Update the prevReqNum to compare with the next request
-                        prevReqNum = curr;
+                        // If the request has a different req_num than the previous one,
+                        // process the data and fulfull the request
+                        if (!prevReqNum.equals(curr)) {
+                            // Use the data from the GUI to interact with the garage and Users
+                            fulfillRequest(headers);
+                            // Update the prevReqNum to compare with the next request
+                            prevReqNum = curr;
+                        }
                     }
+
 
                     /* TODO make this section actually use info from the middleware
                      (For testing purposes) Put data into a HashMap to POST to the GUI
@@ -303,6 +307,7 @@ public class GUItoJava {
             // These 3 are dependent on the database being completed
             case "view":
                 // Call method to view user's info
+                
                 break;
             case "edit":
                 break;
