@@ -25,6 +25,8 @@ import org.joda.time.Period;
  */
 public class Garage {
     
+    
+    
     private int _spots;
     private int _floors;
     private  Map<String, Integer> _garageMap = new HashMap<>();
@@ -33,6 +35,8 @@ public class Garage {
     
     private final double HOURLYRATE = 2.00;
     private final double DAILYRATE = 30;
+    private final int SPOTEMPTY = 0;
+    private final int SPOTTAKEN = 1;
     
     
     public Garage (int floors, int spots){
@@ -53,7 +57,7 @@ public class Garage {
                
                 // -- we turn the spot to the key in the hashmap, and enter 
                 // -- the spot as empty
-                _garageMap.put(turnSpotToKey(i,j), 0);
+                _garageMap.put(turnSpotToKey(i,j), SPOTEMPTY);
               
             }
             
@@ -83,123 +87,71 @@ public class Garage {
     }
     
     /**
-     * in this method, we loop through all of the spots in the garage until we 
-     * find an empty on
+     * 
      * 
      * @return 
      */
-    public String assignSpot(){
-        boolean  _spotEmpty = false;
+    public boolean assignSpotInMap(String spotKey){
+        boolean  _spotMayBeTaken = false;
         
-        String spotKey;
-        
-        int floor = -1;  // -- these are floors and spots the vehicle will 
-        int spot = -1;   // -- be assigned
-                         // -- we say that it is -1, so the program doesnt crash lol
-                         
-        String space;   // -- this will hold the key for the hashmap for any given space
-        
-        int floorIncrement=0;   // -- we use these to increment the counter 
-        int spotIncrement=0;
-        
-        
-        do{
- 
-            do{
-                // -- we get the key for the current space in the loop
-                 space = turnSpotToKey(floorIncrement,spotIncrement);
-                 // -- and we check if it is empty
-                _spotEmpty = _garageMap.get(space) == 0;
-                
-                // -- if the current spot is empty, save the assigned spot
-                // -- into the variables that hold the spot and floor to be saved
-                if (_spotEmpty){
-                    spot = spotIncrement;
-                    floor = floorIncrement;
-                }
-              
-                // -- we the increment the spot to check the next spot
-            spotIncrement++;
+        if(_garageMap.get(spotKey) == SPOTEMPTY){
+            _spotMayBeTaken = true;
+            _garageMap.put(spotKey, SPOTTAKEN);
             
-                // -- we finish the loop when we've found an empty spot
-                // -- or all the spots have been checked on this floor
-            } while(!_spotEmpty && spotIncrement < _spots);
-            
-            // -- we then reset the spot to 0 in order to check and move onto the next floor
-            
-            spotIncrement = 0;
-            floorIncrement++;
-            // -- we end when we find an empty spot or we move through all spots
-        }while(!_spotEmpty && floorIncrement < _floors); 
-        
-        
-        // -- if we find an empty spot 
-        if(_spotEmpty){
-            // -- we set that spot to full in the array, and hashmap
-            spotKey = turnSpotToKey(floor, spot);
-            _garageMap.put(spotKey, 1);
         }
         
-        String toReturn = turnSpotToKey(spot,floor);
-        return toReturn;
+        
+        
+   
+        return _spotMayBeTaken;
         
     }
     
     /**
-     * When we have a daily user try to check in it goes through this method
-     * we try to assign them a spot, and if there is a spot for them
-     * we allow them to check in
+     * we retrieve the spot from the user -- it is a key for a hashmap spot
+     * we then determine if they should have been able to choose it
+     * and if they are, set the value related to the key as the spot filled
+     * value
      * 
      * @param p
      * @return 
      */
     public boolean checkIn(Daily p){
-        boolean canCheckIn = false;
-        
-        // -- if there are no empty spots,  createSpot() will return the string "-1--1"
-        String noneEmpty = "-1--1";
-        
+        boolean canCheckIn;
+       // -- we set the spot through the interface 
+       // -- so we get it here from the user class
+        String userSpot = p.getSpot();
+        // -- this method confirms check in, 
+        // -- and also sets the spot chosen as taken
+        canCheckIn = assignSpotInMap(userSpot);
         // -- we try to get a spot using create spot
-        String userSpot = assignSpot();
+       
+        // if check in was successful we let the caller know
+        // -- so we return true or false
         
-        // -- if we have a spot that is empty 
-        if (!userSpot.equals(noneEmpty)){
-            //we allow the user to check in
-            canCheckIn = true;
-            // -- we set the spot in the user class
-            p.setSpot(userSpot);
-            // -- and send the user info to the database
-            car_count++;
-            sendToDB(p);
-            
-        }
-        
+        car_count++;
         return canCheckIn;
     }
     
     public boolean checkIn(LongTerm p){
-        boolean canCheckIn = false;
-        
-        // -- if there are no empty spots,  createSpot() will return the string "-1--1"
-        String noneEmpty = "-1--1";
-        
+        boolean canCheckIn;
+       // -- we set the spot through the interface 
+       // -- so we get it here from the user class
+        String userSpot = p.getSpot();
+        // -- this method confirms check in, 
+        // -- and also sets the spot chosen as taken
+        canCheckIn = assignSpotInMap(userSpot);
         // -- we try to get a spot using create spot
-        String userSpot = assignSpot();
+       
+        // if check in was successful we let the caller know
+        // -- so we return true or false
         
-        // -- if we have a spot that is empty 
-        if (!userSpot.equals(noneEmpty)){
-            //we allow the user to check in
-            canCheckIn = true;
-            // -- we set the spot in the user class
-            p.setSpot(userSpot);
-            // -- and send the user info to the database
-            car_count++;
-            sendToDB(p);
+        car_count++;
+        return canCheckIn;
             
         }
         
-        return canCheckIn;
-    }
+        
     
    
     
@@ -219,15 +171,18 @@ public class Garage {
         // -- database and call functions
         
         boolean toReturn = false;
+        double amountOwed;
         
         if (userType.equals("longTerm")){
+            // -- we get the user from the database based on their id info
             LongTerm p = dbInterface.getLongTerm(id);
             
-            // -- this is opening their spot up in the hashmap
-            String userSpot = p.getSpot() ;
+            // -- then we get their spot information and empty it out
+            String userSpot = p.getSpot();
             _garageMap.put(userSpot, 0);
             
-            generatePayment(p);
+            // -- next we determine how much they owe by generating their payment
+            amountOwed = generatePayment(p);
             
             toReturn = true;
             
@@ -235,12 +190,17 @@ public class Garage {
         
         // -- if they arent a long term user, they are a daily user
         else{
-        // -- we still get the information from the DB and 
+        // -- we still generate the user based on their id number
+        
              Daily p = dbInterface.getDaily(id);
-             String userSpot = p.getSpot() ;
+             
+             // -- likewise we get their spot and open it in the garage structure
+             String userSpot = p.getSpot();
+             
             _garageMap.put(userSpot, 0);
+             // -- and generate their payment
+            amountOwed = generatePayment(p);
             
-            p.getTimeIn();
             
             toReturn = true;
         }
@@ -255,24 +215,52 @@ public class Garage {
     }
     
     
-    
+    /**
+     * here we generate the payment based on the length of stay
+     * we calculate the number of hours and the number of days
+     * 
+     * if a user stays for less than a 12 hours, we charge them an hourly rate
+     * If they stay for 12 hours or more, they are charged for a day
+     * after 24 hours, they are charge the daily rate per day
+     * 
+     * longterm users get a 75% discount
+     * @param p
+     * @return 
+     */
     private double generatePayment(LongTerm p){
-        
+        // -- we get the check in time of the user 
         String stringInTime = p.getTimeIn();
+        // -- this is an object that will help us convert times to DateTime objects
+        // -- which has a very versatile API
         Time toConvert = new Time();
+        // -- long term users get a 25% discount
         double longTermDiscount = 0.75;
-        double owedAmount = 0;
+        double owedAmount;
        
+        // -- we turn the string inTime into a DateTime object
         DateTime inTime = toConvert.makeNewDateTime(stringInTime);
+        // -- we also turn the checkOut time into a DateTime Object
+        // -- this is the current date
         DateTime outTime = toConvert.makeNewDateTime();
+        // -- the period object has the information about the length of time
+        // -- between the two points in time
         Period period = new Period(inTime, outTime);
+        
+        // -- this is the number of days between the two points in time
         double numDays = period.getDays();
+        
+        // -- and this is the number of hours, likely a big number
         double numHours = period.getHours();
         
+        // -- if the user stays for less than 12 hours, we charge them an hourly 
+        // -- rate
         if(numHours < 12){
             owedAmount = numHours*HOURLYRATE*longTermDiscount;
         }
         else {
+            // -- otherwise we charge them a daily rate
+            // -- we add a day to account for the initial 12 hours counting as a 
+            // -- full day
             numDays = numDays + 1;
             
             owedAmount = numDays*DAILYRATE*longTermDiscount;
@@ -282,23 +270,51 @@ public class Garage {
         return owedAmount;
     }
     
+    /**
+     * here we generate the payment based on the length of stay
+     * we calculate the number of hours and the number of days
+     * 
+     * if a user stays for less than a 12 hours, we charge them an hourly rate
+     * If they stay for 12 hours or more, they are charged for a day
+     * after 24 hours, they are charge the daily rate per day
+     * @param p
+     * @return 
+     */
     private double generatePayment(Daily p){
-        
+        // -- we get the check in time of the user 
         String stringInTime = p.getTimeIn();
+        // -- this is an object that will help us convert times to DateTime objects
+        // -- which has a very versatile API
         Time toConvert = new Time();
+        // -- daily users have the ability to have a discount, but don't currently
         double dailyDiscount = 1;
+        
         double owedAmount = 0;
        
+        // -- we turn the string inTime into a DateTime object
         DateTime inTime = toConvert.makeNewDateTime(stringInTime);
+        // -- we also turn the checkOut time into a DateTime Object
+        // -- this is the current date
         DateTime outTime = toConvert.makeNewDateTime();
+         // -- the period object has the information about the length of time
+        // -- between the two points in time
         Period period = new Period(inTime, outTime);
+        
+        // -- this is the number of days between the two points in time
         double numDays = period.getDays();
+        
+        // -- and this is the number of hours, likely a big number
         double numHours = period.getHours();
         
+        // -- if the user stays for less than 12 hours, we charge them an hourly 
+        // -- rate
         if(numHours < 12){
             owedAmount = numHours*HOURLYRATE*dailyDiscount;
         }
         else {
+            // -- otherwise we charge them a daily rate
+            // -- we add a day to account for the initial 12 hours counting as a 
+            // -- full day
             numDays = numDays + 1;
             
             owedAmount = numDays*DAILYRATE*dailyDiscount;
@@ -353,3 +369,4 @@ public class Garage {
     }
     
 }
+
