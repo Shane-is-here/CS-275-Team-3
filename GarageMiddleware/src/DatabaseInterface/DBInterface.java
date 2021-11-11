@@ -14,6 +14,9 @@ import users.*;
  * @author jacob
  */
 public class DBInterface {
+    
+ 
+    
     /**
      * We use the get method for all relevant information on the long term user
      * when we can, it will be saved into the database
@@ -22,6 +25,8 @@ public class DBInterface {
      * @return 
      */
     public boolean saveUser(LongTerm p){
+        String firstName = p.getFirstName();
+        String lastName = p.getLastName();
         String emailToSave =  p.getEmail();
         int idToSave = p.getID();
         String phoneToSave = p.getPhone();
@@ -29,8 +34,15 @@ public class DBInterface {
         String timeInToSave = p.getTimeIn();
         String userType = "longTerm";
         String paymentInfo = p.getPaymentInfo();
+        String cardInfo = paymentInfo.substring(0, paymentInfo.length() - 6);
+        String zipCode = paymentInfo.substring(paymentInfo.length() - 5, 
+                paymentInfo.length());
+        System.out.println(cardInfo);
+        System.out.println(zipCode);
         String password = p.getPassword();
         
+        Database.saveFile(firstName, lastName, password, Integer.toString(idToSave), 
+                cardInfo, emailToSave, timeInToSave, spotToSave, phoneToSave, zipCode, userType);
         // -- our return value will be whether or not the save is successful
         return true;
     }
@@ -46,14 +58,20 @@ public class DBInterface {
      * @return the return is whether or not the method went through
      */
     public boolean saveUser(Daily p){
+        String firstName = p.getFirstName();
+        String lastName = p.getLastName();
         String emailToSave = "";
         int idToSave = p.getID();
         String phoneToSave = "";
         String spotToSave =p.getSpot();
         String timeInToSave = p.getTimeIn();
         String userType = "daily";
-        String paymentInfo = "";
+        String cardInfo = "";
+        String zipCode = "";
         String password = "";
+        
+        Database.saveFile(firstName, lastName, password, Integer.toString(idToSave), 
+                cardInfo, emailToSave, timeInToSave, spotToSave, phoneToSave, zipCode, userType);
         
         // -- our return value will be whether or not the save is successful
         return true;
