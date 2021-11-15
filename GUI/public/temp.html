@@ -45,6 +45,8 @@
             <div class="header">
                 <h1>Welcome!</h1>
                 <p>Please enter your information below...</p>
+                <p id="fail">Failed to receive data. Please try again.</p>
+                <p id="login-false">There is no garage availability at this time. Sorry for the inconvenience.</p>
             </div>
             <div class="footer">
                 <form class="check-in">
@@ -70,6 +72,8 @@
         let submit = document.getElementById('submit');
         let spot = document.querySelector('.spot');
         let close = document.querySelector('.close');
+        let fail = document.getElementById('fail');
+        let login_false = document.getElementById('login-false');
 
         // User check block
         let block = document.querySelector('.block');
@@ -92,7 +96,6 @@
         submit.addEventListener('click', async () => {
             
             block.style.display = "block";
-            block.style.display = "none";
             
             /* Date: YYYY/mm/dd */
             let d = new Date();
@@ -111,34 +114,45 @@
                 last: lname.value,
                 phone: pnum.value,
                 start_time: date_string + '/' + time,
-                ID: id,
             };
 
             post('/api/request', data);
-            
-            current_req = await fetch('/api/current_req');
-            current_req = await current_req.json();
-            current_req = current_req.current_req;
-            console.log(current_req);
 
-            receiving_req = -1
-            // while(current_req != -1) {
-            //     received_data = await fetch('/api/receive?req_num=');
-            //     received_data = await received_data.json();
-            //     current_req = received_data.current_req;
-            // }
-            var id = Math.floor(Math.random()*100000);
-            mod.style.display =  "block";
-            let spots = ['G14', 'A12', 'C05'];
-            var index = Math.floor(Math.random() * spots.length);
-            spot.innerHTML = spots[index];
-            name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
-            phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
-            start_display.innerHTML = "<b>Start Time: </b>" + mm + "/" + dd + "/" + YYYY + " " + hh + ":" + min;
-            h2.innerHTML = "<b>ID: </b>" + id;
+            try {
+                fail.style.display = "none";
+                login_false.style.display = "none";
+                let received_data = await wait();
+                current_req = await fetch('/api/current_req');
+                current_req = await current_req.json();
+                current_req = current_req.current_req;
+                receiving_req = -1
+                mod.style.display =  "block";
 
-            
-            // finish.innerHTML = "<b>Expected Finish Time: </b>" + "Kevin Hoffman"; 
+                let verify = 0
+                if(verify === 0) {
+                    // if Object.keys(received_data).length === 0
+                    mod.style.display =  "none";
+                    fail.style.display = "block";
+                    login_false.style.display = "none";
+                } else if (verify === 1){
+                    // if !received_data.verify
+                    mod.style.display =  "none";
+                    fail.style.display = "none";
+                    login_false.style.display = "block";
+                } else {
+                    spot.innerHTML = received_data.spot;
+                    name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
+                    phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
+                    start_display.innerHTML = "<b>Start Time: </b>" + mm + "/" + dd + "/" + YYYY + " " + hh + ":" + min;
+                    h2.innerHTML = "<b>ID: </b>" + received_data.id;
+                }
+                
+            } catch {
+                mod.style.display =  "none";
+                fail.style.display = "block";
+            }
+
+            block.style.display = "none";
         });
 
         close.addEventListener('click', async () => {
