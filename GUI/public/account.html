@@ -51,10 +51,10 @@
                 <div class="alert id">
                     <div class="info">
                         <ul>
-                            <li class="uname"><b>Username</b></li>
-                            <li class="start"><b>Registration Date: </b></li>
-                            <li class="email"><b>Email: </b></li>
-                            <li class="payment"><b>Last 4 digits of Credit Card: </b></li>
+                            <li id="uname-display"><b>Username: </b></li>
+                            <li id="start-display"><b>Registration Date: </b></li>
+                            <li id="email-display"><b>Email: </b></li>
+                            <li id="payment-display"><b>Last 4 digits of Credit Card: </b></li>
                         </ul>                        
                     </div>
                     <div class="spot-container">
@@ -69,19 +69,23 @@
     <script>
         // Load DOM Elements
         let submit = document.getElementById('submit');
-        let payment = document.querySelector('.payment');
         let close = document.querySelector('.close');
         let name = document.querySelector('.name');
-        let start = document.querySelector('.start');
-        let finish = document.querySelector('.finish');
         let body = document.querySelector('body');
         let login_false = document.getElementById('login-false');
         let login = document.getElementById('login');
         let details = document.getElementById('details');
         let uname = document.getElementById('uname');
         let pass = document.getElementById('pass');
+        let spot = document.getElementById('spot');
         let block = document.querySelector('.block');
         let h2 = document.querySelector('.h2');
+
+        // DOM Elements populated from middleware
+        let uname_d = document.getElementById('uname-display');
+        let email_d = document.getElementById('email-display');
+        let start_d = document.getElementById('start-display');
+        let payment_d = document.getElementById('payment-display');
 
         // On submit, verify account details. If verified, display account details, otherwise warn user.
         submit.addEventListener('click', async () => {
@@ -118,7 +122,18 @@
             if(verified) {
                 details.style.display = "block";
                 login.style.display = "none";
-                // Populate data
+
+                uname.innerHTML = "<b>Username: </b>" + received_data.uname;
+                email.innerHTML = "<b>Email: </b>" + received_data.email;
+                start.innerHTML = "<b>Start Date: </b>" + received_data.start;
+                payment.innerHTML = "<b>Payment Option: </b>" + received_data.payment;
+                spot.innerHTML = received_data.spot;
+
+//                 uname_d.innerHTML = "<b>Username: </b>" + "KevinTest";
+//                 email_d.innerHTML = "<b>Email: </b>" + "kevohoffman@icloud.com";
+//                 start_d.innerHTML = "<b>Start Date: </b>" + "11/14/2021 18:27";
+//                 payment_d.innerHTML = "<b>Payment Option: </b>" + "Card Ending in 4391";
+//                 spot.innerHTML = "3-42";
             }
             // If not verified account
             else if(!verified) {
