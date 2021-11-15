@@ -11,19 +11,19 @@ public class Database {
     // Save the data but don't overwite. Get latest data set.
 
     // Declare new file writer for latest data save
-    FileWriter fw2 = null;
-    BufferedWriter bw2 = null;
-    PrintWriter pw2 = null;
+    FileWriter fw = null;
+    BufferedWriter bw = null;
+    PrintWriter pw = null;
     
     try {
       
       // Target latest save with false (will overwrite instead of add to)
-      fw2 = new FileWriter("latestsave.txt", false);
-      bw2 = new BufferedWriter(fw2);
-      pw2 = new PrintWriter(bw2);
+      fw = new FileWriter("latestsave.txt", false);
+      bw = new BufferedWriter(fw);
+      pw = new PrintWriter(bw);
 
       // Code is the same as database.txt saving code
-      pw2.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n",
+      pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n",
       firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term);
 
       System.out.println("Latest data saved.");
@@ -33,7 +33,7 @@ public class Database {
       e.printStackTrace();
     }
 
-    pw2.flush();
+    pw.flush();
   }
 
   public static void saveFile(String firstname, String lastname, String pass, String ID, String creditCardNum, String email, 
@@ -149,21 +149,25 @@ public class Database {
     return toReturn; // return
   }
 
-  public static void garageSaveState(garage){
+  public static void garageSaveState(HashMap garage){
 
-
-    FileWriter fw2 = null;
-    BufferedWriter bw2 = null;
-    PrintWriter pw2 = null;
+    FileWriter fw = null;
+    BufferedWriter bw = null;
+    PrintWriter pw = null;
     
     try {
       
-      fw2 = new FileWriter("garageSaveState.txt", false);
-      bw2 = new BufferedWriter(fw2);
-      pw2 = new PrintWriter(bw2);
+      fw = new FileWriter("garageSaveState.txt", false);
+      bw = new BufferedWriter(fw);
+      pw = new PrintWriter(bw);
 
-      // Code is the same as database.txt saving code
-      pw2.printf("%s%n",garage);
+      StringBuilder mapAsString = new StringBuilder("{");
+      for (Object key : garage.keySet()) {
+          mapAsString.append(key + "=" + garage.get(key) + ", ");
+      }
+      mapAsString.delete(mapAsString.length()-2, mapAsString.length()).append("}");
+
+      pw.printf("%s%n", mapAsString);
 
       System.out.println("Garage data saved.");
 
@@ -172,24 +176,25 @@ public class Database {
       e.printStackTrace();
     }
 
-    pw2.flush();
-
+    pw.flush();
 
   }
 
-  public static ArrayList<String> retrieveData(){
+  public static HashMap retrieveData(){
 
-    ArrayList<String> toReturn = new ArrayList<String>(); // return value
-
-
-
-
-    return toReturn;
-
+    return null;
   }
 
   // Used to test functions above
   public static void main(String[] args){
-    
+
+      HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
+        
+      //key-value pairs
+      hMapNumbers.put("One", 1);
+      hMapNumbers.put("Two", 2);
+      hMapNumbers.put("Three", 3);
+
+      garageSaveState(hMapNumbers);
   }
 }
