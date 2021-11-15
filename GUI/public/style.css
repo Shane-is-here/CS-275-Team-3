@@ -331,6 +331,7 @@ ul {
 }
 #login-false {
   display: none;
+  color: red;
 }
 #login {
   display: block;
@@ -340,4 +341,8 @@ ul {
 }
 .select-floor {
   font-size: 12px;
+}
+#fail {
+  color: red;
+  display: none;
 }
