@@ -102,10 +102,10 @@ public class Database {
   }
 
   // Values to allow search loop to work
-  public static int datalen = 10;
-  public static int idlen = 4;
-  public static int getstart = -3;
-  public static int getend = 8;
+  public static int datalen = 11;
+  public static int idlen = 3;
+  public static int getstart = -5;
+  public static int getend = 7;
 
   /**
    * 
@@ -136,16 +136,47 @@ public class Database {
     String[] dbvalues = data.split("\\,");
 
     // Search through array for only the IDs
-    for(int i = 0; i < dbvalues.length; i += datalen){
-      if(datalen + i < dbvalues.length){
-        String IDBlock = dbvalues[(idlen - 1) + i]; 
-        if(IDBlock.equals(ID)){ // If ID is found add string to array list
-          for(int j = getstart; j < getend; j++){
-            toReturn.add(dbvalues[(idlen - 1) + i + j]);
-          }
+    for(int i = idlen; i < dbvalues.length; i += datalen){
+      String IDBlock = dbvalues[i];
+      if(IDBlock.equals(ID)){ // If ID is found add string to array list
+        for(int j = getstart; j < getend; j++){
+          toReturn.add(dbvalues[(idlen - 1) + i + j]);
         }
-      }
+      } 
     }
+    return toReturn; // return
+  }
+
+/**
+   * 
+   * @return Array List that was last saved
+   */
+  public static ArrayList<String> retrieveLatestSave(){
+
+    String data = ""; // text file data
+    ArrayList<String> toReturn = new ArrayList<String>(); // return value
+
+    // Must try for exception using scanner
+    try {
+
+      // Retrieve database data
+      File db = new File("latestsave.txt");
+      Scanner myReader = new Scanner(db);
+      while (myReader.hasNextLine()) {
+        data += myReader.nextLine();
+      }
+      myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    // Turn string into array
+    String[] dbvalues = data.split("\\,");
+    for(int i = 0; i < dbvalues.length; i++){
+      toReturn.add(dbvalues[i]);
+    }
+    
     return toReturn; // return
   }
 
@@ -180,7 +211,7 @@ public class Database {
 
   }
 
-  public static HashMap retrieveData(){
+  public static HashMap retrieveGarageData(){
 
     return null;
   }
@@ -188,13 +219,23 @@ public class Database {
   // Used to test functions above
   public static void main(String[] args){
 
-      HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
+    //System.out.println(retrieveLatestSave());
+
+    //saveFile("test", "test", "test", "1", "test", "test", "test", "test", "test", "test", "test");
+    //ArrayList two = retrieveData("2");
+    //ArrayList one = retrieveData("1");
+    //ArrayList three = retrieveData("3");
+    //System.out.println(three);
+    //System.out.println(two);
+    //System.out.println(one);
+
+      /*HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
         
       //key-value pairs
       hMapNumbers.put("One", 1);
       hMapNumbers.put("Two", 2);
       hMapNumbers.put("Three", 3);
 
-      garageSaveState(hMapNumbers);
+      garageSaveState(hMapNumbers);*/
   }
 }
