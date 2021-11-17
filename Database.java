@@ -66,39 +66,28 @@ public class Database {
       Matcher matcher = pattern.matcher(data);
       boolean matchFound = matcher.find();
 
-        if(matchFound){
-          System.out.println("Duplicate data detected, not saving data. Incrementing ID.");
-          int i = Integer.parseInt(ID);
-          i = i + 1;
-          ID = String.valueOf(i);
   
-        } else {
+      try {
   
-          try {
+          fw = new FileWriter("database.txt", true); // sets which file to print and add to
+          bw = new BufferedWriter(fw);
+          pw = new PrintWriter(bw);
   
-            fw = new FileWriter("database.txt", true); // sets which file to print and add to
-            bw = new BufferedWriter(fw);
-            pw = new PrintWriter(bw);
-  
-            pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
+          pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
             firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term); // set data
   
-            lastestSave(firstname, lastname, pass, ID, creditCardNum, email, timeArrived, parkingSpot, phoneNumber, zipcode, term);
+          lastestSave(firstname, lastname, pass, ID, creditCardNum, email, timeArrived, parkingSpot, phoneNumber, zipcode, term);
   
-            System.out.println("Data Successfully appended into file"); // confirmation of saving data
+          System.out.println("Data Successfully appended into file"); // confirmation of saving data
   
-          } catch (IOException e) {
-              System.out.println("An error occurred.");
-              e.printStackTrace();
-          }
-  
-            pw.flush();
-            isDataSaved = true;
-  
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
-
+  
+        pw.flush();
+        isDataSaved = true;
       }
-
   }
 
   // Values to allow search loop to work
