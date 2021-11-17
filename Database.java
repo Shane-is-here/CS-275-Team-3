@@ -213,7 +213,32 @@ public class Database {
 
   public static HashMap retrieveGarageData(){
 
-    return null;
+    String data = ""; // text file data
+
+    // Must try for exception using scanner
+    try {
+
+    // Retrieve database data
+    File db = new File("garageSaveState.txt");
+    Scanner myReader = new Scanner(db);
+    while (myReader.hasNextLine()) {
+      data += myReader.nextLine();
+    }
+    myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    HashMap<String, Integer> toReturn = new HashMap<String, Integer>();
+    String[] pairs = data.split(", ");
+    for (int i = 0; i < pairs.length; i++) {
+        String pair = pairs[i];
+        String[] keyValue = pair.split("=");
+        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1]));
+    }
+    
+    return toReturn; // return
   }
 
   // Used to test functions above
@@ -228,14 +253,16 @@ public class Database {
     //System.out.println(three);
     //System.out.println(two);
     //System.out.println(one);
+    /*
+      HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
 
-      /*HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
-        
       //key-value pairs
       hMapNumbers.put("One", 1);
       hMapNumbers.put("Two", 2);
       hMapNumbers.put("Three", 3);
 
-      garageSaveState(hMapNumbers);*/
+      garageSaveState(hMapNumbers);
+
+      retrieveGarageData();*/
   }
 }
