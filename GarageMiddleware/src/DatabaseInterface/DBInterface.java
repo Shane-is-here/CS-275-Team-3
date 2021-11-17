@@ -6,6 +6,7 @@
 package DatabaseInterface;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 import users.*;
 
 
@@ -115,21 +116,33 @@ public class DBInterface {
      * @param id
      * @return 
      */
-    public LongTerm getLongTerm(int id){
+    public static LongTerm getLongTerm(int id){
         LongTerm p = new LongTerm(id,"Jacob", "Dunst");
         return p;
     }
    
     /**
-     *  we get all of the information relevant to the long term user
+     *  we get all of the information relevant to the short term user
      * and we then create a "new" user with all of the information of the user 
      * being called
      * 
      * @param id
      * @return 
      */
-    public Daily getDaily(int id){
-        Daily p = new Daily(id,"Jacob", "Dunst");
+    public static Daily getDaily(int id){
+        System.out.println(Integer.toString(id));
+        ArrayList<String> userData = Database.retrieveData(Integer.toString(id));
+        
+        System.out.println(userData);
+        
+        String first = userData.get(0);
+        String last = userData.get(1);
+        String timeIn = userData.get(6);
+        String spot = userData.get(7);
+        
+        Daily p = new Daily(id,first, last);
+        p.setSpot(spot);
+        p.setTimeIn(timeIn);
         return p;
     }
    
