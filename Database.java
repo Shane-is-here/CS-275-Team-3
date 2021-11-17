@@ -80,13 +80,14 @@ public class Database {
   
           System.out.println("Data Successfully appended into file"); // confirmation of saving data
   
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+      } catch (IOException e) {
+          System.out.println("An error occurred.");
+          e.printStackTrace();
+      }
   
-        pw.flush();
-        isDataSaved = true;
+      pw.flush();
+      isDataSaved = true;
+
       }
   }
 
@@ -241,7 +242,7 @@ public class Database {
     //ArrayList three = retrieveData("3");
     //System.out.println(three);
     //System.out.println(two);
-    //System.out.println(one);
+    System.out.println(retrieveData("1"));
     /*
       HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
 
