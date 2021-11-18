@@ -29,7 +29,7 @@ public class Garage {
     
     private int _spots;
     private int _floors;
-    private  Map<String, Integer> _garageMap = new HashMap<>();
+    private Map<String, Integer> _garageMap = new HashMap<>();
     private DBInterface dbInterface = new DBInterface();
     private static int car_count;
     
@@ -65,6 +65,10 @@ public class Garage {
          
         }
         
+    }
+    
+    public Map<String, Integer> getGarageMap(){
+        return this._garageMap;
     }
     
     
@@ -118,6 +122,7 @@ public class Garage {
      */
     public boolean checkIn(Daily p){
         boolean canCheckIn;
+        p.setSpot("0-0");
        // -- we set the spot through the interface 
        // -- so we get it here from the user class
         String userSpot = p.getSpot();
@@ -128,7 +133,7 @@ public class Garage {
        
         // if check in was successful we let the caller know
         // -- so we return true or false
-        
+        this.dbInterface.saveUser(p);
         car_count++;
         return canCheckIn;
     }
@@ -164,13 +169,13 @@ public class Garage {
      * @param userType
      * @return 
      */
-    public boolean checkOut(int id, String userType){
+    public double checkOut(int id, String userType){
         // -- this will be determined by getting information from the db
        
         // -- if the user is a long term we will get their information from the 
         // -- database and call functions
         
-        boolean toReturn = false;
+        double toReturn;
         double amountOwed;
         
         if (userType.equals("longTerm")){
@@ -184,7 +189,7 @@ public class Garage {
             // -- next we determine how much they owe by generating their payment
             amountOwed = generatePayment(p);
             
-            toReturn = true;
+            toReturn = amountOwed;
             
         }
         
@@ -202,7 +207,7 @@ public class Garage {
             amountOwed = generatePayment(p);
             
             
-            toReturn = true;
+            toReturn = amountOwed;
         }
         
        
