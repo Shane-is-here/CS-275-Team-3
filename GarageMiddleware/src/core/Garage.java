@@ -32,7 +32,8 @@ public class Garage {
     private Map<String, Integer> _garageMap = new HashMap<>();
     private DBInterface dbInterface = new DBInterface();
     private static int car_count;
-    
+    private int _mostRecentID = dbInterface.getMostRecentID();
+    private int _idToSave;
     private final double HOURLYRATE = 2.00;
     private final double DAILYRATE = 30;
     private final int SPOTEMPTY = 0;
@@ -44,7 +45,7 @@ public class Garage {
         // -- these are how many spots and floors we have
         _floors = floors;
         _spots = spots;
-        
+        _idToSave = _mostRecentID++;
         // -- this is the map keeping track of spots from the garage
         Map<String, Integer> _garageMapFromDB = dbInterface.getGarageSpots();
         
@@ -122,6 +123,8 @@ public class Garage {
      */
     public boolean checkIn(Daily p){
         boolean canCheckIn;
+        p.setID(_idToSave);
+        _idToSave++;
         p.setSpot("0-0");
        // -- we set the spot through the interface 
        // -- so we get it here from the user class
@@ -357,8 +360,21 @@ public class Garage {
     
     
     
-    
-    
+    public boolean checkForEmptySpots(){
+        boolean areEmptySpots;
+        int spotsEmpty;
+        areEmptySpots = _garageMap.containsValue(SPOTEMPTY);
+        return areEmptySpots;
+    }
+   
+    /*
+    public int getNumEmpty(){
+        int numSpotsEmpty=0;
+        for (int i =0; i < _floors; i++){
+            
+        }
+    }
+    */
     
     public void printOut(){
         String spot;
@@ -374,4 +390,3 @@ public class Garage {
     }
     
 }
-
