@@ -18,7 +18,7 @@ import DatabaseInterface.*;
  */
 public class CoreProcessing {
 
-    static Garage garage = new Garage(5, 5);
+    static Garage garage = new Garage(7, 8);
 
     /**
      *
@@ -107,7 +107,7 @@ public class CoreProcessing {
             }
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }
@@ -175,6 +175,7 @@ public class CoreProcessing {
         String startTime = "";
         String ID = "1";
         String endTime = "";
+        String spot = "";
         String username = "";
         String password = "";
         String email = "";
@@ -247,7 +248,10 @@ public class CoreProcessing {
                 case "zip":
                     zipCode = value;
                     break;
-
+                case "spot":
+                    spot = value;
+                    break;
+                    
                 default:
                     break;
 
@@ -264,7 +268,8 @@ public class CoreProcessing {
             case "checkin":
                 Daily dailyUser = new Daily(Integer.parseInt(ID), first, last);
                 dailyUser.setTimeIn(startTime);
-                postGarage(req_num);
+                dailyUser.setSpot(spot)
+                // Get user's spot from
                 garage.checkIn(dailyUser);
                 break;
             case "checkout":
@@ -275,12 +280,14 @@ public class CoreProcessing {
                 break;
             case "register":
                 LongTerm longUser = new LongTerm(Integer.parseInt(ID), first, last);
+                longUser.setUsername(username);
                 longUser.setTimeIn(startTime);
                 longUser.setPassword(password);
                 String paymentInfo = cardNum + "/" + expiration + "/" + securityCode
                         + "/" + zipCode;
                 longUser.setPaymentInfo(paymentInfo);
                 longUser.setEmail(email);
+                longUser.setSpot(spot);
                 garage.checkIn(longUser);
                 break;
 
@@ -294,7 +301,9 @@ public class CoreProcessing {
 
             case "close":
                 break;
-
+            case "garage":
+                postGarage(req_num);
+                break;
             default:
                 break;
 
@@ -309,8 +318,9 @@ public class CoreProcessing {
         RequestHandler r = new RequestHandler(uri);
         var objectMapper = new ObjectMapper();
         int reqInt = Integer.parseInt(req_num);
-        reqInt++;
-        String postString = "{\"req_num\":"+ reqInt +",\"request\":\"garage\",";
+        
+        String postString = "{\"request\":\"garage\",\"req_num\":"+ reqInt +","
+                + "\"hasSpot\":\"true\",";
             
         String garageBody;
             garageBody = objectMapper.writeValueAsString(garage.getGarageMap());
