@@ -19,20 +19,29 @@ function post(url, body) {
 
 // Waits for middleware to post, then extracts the post using a get method. Returns and empty object if the middleware does not post.
 async function wait() {
-    console.log("Waiting for post");
-    current_req = -1;
-
+    let current_req = await fetch('/api/current_req');
+    current_req = await current_req.json();
+    console.log(current_req.current_req);
     let i = 0;
-    while(current_req == -1 && i < 20) {
-        received_data = await fetch('/api/receive?req_num='+ current_req);
+    let isFound = false;
+    while(!isFound && i < 5) {
+        let current_req = await fetch('/api/current_req');
+        current_req = await current_req.json();
+
+        received_data = await fetch('/api/receive?req_num='+ current_req.current_req);
         received_data = await received_data.json();
-        console.log(received_data);
-        if(Object.keys(received_data).length != 0) {
-            current_req = received_data.current_req;
+        if(Object.keys(received_data).length > 0) {
+            try{
+                current_req = received_data.current_req;
+                isFound = true;
+            } catch {
+
+            }
+            
         }
         
         console.log('waiting...');
-        await sleep(500);
+        await sleep(1000);
         i++;  
     }
     return received_data;
