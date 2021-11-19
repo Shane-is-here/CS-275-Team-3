@@ -48,30 +48,30 @@
             <div class="footer">
                 <form class="check-in">
                     <div>
-                        <fieldset class="side-by-side half">
+                        <fieldset class="side-by-side third">
                             <input placeholder="Username" autofocus tabindex="1" type="username" id="uname" name="uname" required>
                         </fieldset>
-                        <fieldset class="side-by-side half">
+                        <fieldset class="side-by-side third">
                             <input placeholder="Password" tabindex="2" type="password" id="pass" name="pass" required>
+                        </fieldset>
+                        <fieldset class="side-by-side third">
+                            <input placeholder="Email" tabindex="3" type="email" id="email" name="email" required>
                         </fieldset>
                     </div>
                     <fieldset>
-                        <input placeholder="Card Number" tabindex="2" type="text" id="cnum" name="cnum" required>
+                        <input placeholder="Card Number" tabindex="4" type="text" id="cnum" name="cnum" required>
                     </fieldset>
                     <div>
                         <fieldset class="side-by-side third">
-                            <input placeholder="Expiration Date" tabindex="3" type="text" id="exp" name="exp" required>
+                            <input placeholder="Expiration Date" tabindex="5" type="text" id="exp" name="exp" required>
                         </fieldset>
                         <fieldset class="side-by-side third">
-                            <input placeholder="Security Code" tabindex="4" type="text" id="sec" name="sec" required>
+                            <input placeholder="Security Code" tabindex="6" type="text" id="sec" name="sec" required>
                         </fieldset>
                         <fieldset class="side-by-side third">
-                            <input placeholder="Zip Code" tabindex="5" type="text" id="zip" name="zip" required>
+                            <input placeholder="Zip Code" tabindex="7" type="text" id="zip" name="zip" required>
                         </fieldset>
                     </div>
-                    <fieldset>
-                        <input placeholder="Email" tabindex="6" type="email" id="email" name="email" required>
-                    </fieldset>
                     
                     <p class="terms">This payment only accounts for the duration stayed in increments of half-hours, rounded down.</p>
                     <fieldset>
@@ -122,6 +122,7 @@
         let fail = document.getElementById('fail');
     </script>
     <script>
+
         // Initialize post data
         var data = {}
 
@@ -141,46 +142,35 @@
             let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + mm;
 
             // Populate post data
-            var data = {
-                request: "garage"
+            var req_gar = {
+                request: "garage",
             };
 
-            post('/api/request', data);
+            post('/api/request', req_gar);
 
 
             try {
                 form.style.display =  "none";
                 garage.style.display =  "block";
                 fail.style.display = "none";
-                let gar_data = await wait();
+                
+                let received_data = await wait();
 
-//                 Temporary data
-//                 gar_data = {
-//                     "1-1": 1,
-//                     "1-2": 0,
-//                     "1-3": 0,
-//                     "1-4": 1,
-//                     "1-5": 0,
-//                     "1-6": 1,
-//                     "1-7": 0,
-//                     "2-1": 0,
-//                     "2-2": 0,
-//                     "2-3": 0,
-//                     "2-4": 1,
-//                     "2-5": 0,
-//                     "2-6": 0,
-//                     "3-1": 1,
-//                     "3-2": 1,
-//                     "3-3": 1,
-//                     "3-4": 1,
-//                     "3-5": 0,
-//                     "3-6": 0,
-//                     "3-7": 1,
-//                     "3-8": 0,
-//                     "3-9": 1,
-//                     "3-10": 0,
-//                 }
+                // Temporary data
+                let gar_data = received_data;
+                delete gar_data['req_num'];
+                delete gar_data['request'];
+                delete gar_data['hasSpot'];
+                console.log(gar_data);
 
+
+                data = {
+                    request: "register",
+                    uname: uname.value,
+                    pass: pass.value,
+                    datetime: datetime,
+                    cnum: cnum.value
+                };
                 // Build garage
                 garageSetup(gar_data);
                 block.style.display = "none";
@@ -220,7 +210,7 @@
         let levels = document.getElementsByClassName("level");
         let rows = document.getElementsByClassName("gridRow");
         let cells = document.getElementsByClassName("cell");
-        var floor = 1;
+        var floor = 0;
 
         // Converts data from middleware into more accessible data structure
         function formatData(data) {
@@ -268,7 +258,7 @@
                 makeGrid(n, level, value2);
             }
 
-            levels[floor-1].style.display = "block";
+            levels[floor].style.display = "block";
         }
 
         // Creates a default grid sized nxn 
@@ -303,19 +293,19 @@
 
         // Displays the next floor of the garage to user if it exists
         function nextFloor() {
-            if(floor < levels.length) {
-                levels[floor-1].style.display = "none";
+            if(floor < levels.length-1) {
+                levels[floor].style.display = "none";
                 floor = floor + 1;
-                levels[floor-1].style.display = "block";
+                levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }
         }
         // Displays the previous floor of the garage to user if it exists
         function backFloor() {
-            if(floor > 1) {
-                levels[floor-1].style.display = "none";
+            if(floor > 0) {
+                levels[floor].style.display = "none";
                 floor = floor - 1;
-                levels[floor-1].style.display = "block";
+                levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }  
         }
@@ -329,6 +319,8 @@
             post('/api/request', data);
 
             mod.style.display = "block";
+
+            console.log(data);
 
             dates = data.datetime.split('/');
 
