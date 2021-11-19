@@ -60,42 +60,39 @@ public class Database {
 
     boolean isDataSaved = false;
 
-    while(isDataSaved == false){
+    Pattern pattern = Pattern.compile(ID, Pattern.CASE_INSENSITIVE);
+    Matcher matcher = pattern.matcher(data);
+    boolean matchFound = matcher.find();
 
-      Pattern pattern = Pattern.compile(ID, Pattern.CASE_INSENSITIVE);
-      Matcher matcher = pattern.matcher(data);
-      boolean matchFound = matcher.find();
+    try {
 
-  
-      try {
-  
-          fw = new FileWriter("database.txt", true); // sets which file to print and add to
-          bw = new BufferedWriter(fw);
-          pw = new PrintWriter(bw);
-  
-          pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
-            firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term); // set data
-  
-          lastestSave(firstname, lastname, pass, ID, creditCardNum, email, timeArrived, parkingSpot, phoneNumber, zipcode, term);
-  
-          System.out.println("Data Successfully appended into file"); // confirmation of saving data
-  
-      } catch (IOException e) {
-          System.out.println("An error occurred.");
-          e.printStackTrace();
-      }
-  
-      pw.flush();
-      isDataSaved = true;
+        fw = new FileWriter("database.txt", true); // sets which file to print and add to
+        bw = new BufferedWriter(fw);
+        pw = new PrintWriter(bw);
 
-      }
-  }
+        pw.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%n", // declare data types
+          firstname,lastname,pass,ID,creditCardNum,email,timeArrived,parkingSpot,phoneNumber,zipcode,term); // set data
+
+        lastestSave(firstname, lastname, pass, ID, creditCardNum, email, timeArrived, parkingSpot, phoneNumber, zipcode, term);
+
+        System.out.println("Data Successfully appended into file"); // confirmation of saving data
+
+    } catch (IOException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+    }
+
+    pw.flush();
+    isDataSaved = true;
+
+    }
+
 
   // Values to allow search loop to work
   public static int datalen = 11;
   public static int idlen = 3;
   public static int getstart = -5;
-  public static int getend = 7;
+  public static int getend = 6;
 
   /**
    * 
@@ -242,7 +239,7 @@ public class Database {
     //ArrayList three = retrieveData("3");
     //System.out.println(three);
     //System.out.println(two);
-    System.out.println(retrieveData("1"));
+    //System.out.println(retrieveData("1"));
     /*
       HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
 

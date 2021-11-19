@@ -156,8 +156,11 @@ public class DBInterface {
         return mostRecentId;
     }
 
-    /*public static void main(String[] args){
+    /*
+    public static void main(String[] args){
+
+        getDaily("1");
         
-    }
-    */
+    }*/
+    
 }
