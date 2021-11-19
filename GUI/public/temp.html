@@ -24,9 +24,9 @@
                 <div class="alert id">
                     <div class="info">
                         <ul>
-                            <li class="name-display">Full Name: </li>
-                            <li class="phone-display">Phone Number: </li>
-                            <li class="start-display">Start Time: </li>
+                            <li id="name-display">Full Name: </li>
+                            <li id="phone-display">Phone Number: </li>
+                            <li id="start-display">Start Time: </li>
                         </ul>
                         <div class="spot-container">
                             <h2 class="h2">ID: </h2>
@@ -66,6 +66,23 @@
                 </form>
             </div>
         </div>
+        <div class="container" id="garage">
+            <a href="/index.html">
+                <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
+            </a>
+            <div class="header">
+                <h1>Please select a parking spot</h1>
+            </div>
+            <div class="footer">
+                <div id="frame">
+                    <h2 id="counter">Level: </h2>
+                </div>
+                <div class="selection">
+                    <button class="select-floor" onclick="nextFloor()">Level Up</button>
+                    <button class="select-floor" onclick="backFloor()">Level Down</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="block"></div>
     <script>
@@ -80,18 +97,21 @@
         let mod = document.querySelector('.modal');
         let h2 = document.querySelector('.h2');
 
-        let name_display = document.querySelector('.name-display');
-        let phone_display = document.querySelector('.phone-display');
-        let start_display = document.querySelector('.start-display');
+        let name_display = document.getElementById('name-display');
+        let phone_display = document.getElementById('phone-display');
+        let start_display = document.getElementById('start-display');
         
         // Form block
         let pnum = document.getElementById('pnum');
         let fname = document.getElementById('fname');
         let lname = document.getElementById('lname');
+        let garage = document.getElementById('garage');
 
         pnum.onkeyup = function(e) {
             phone_number_check(this,e);
         }
+
+        let data = {}
 
         submit.addEventListener('click', async () => {
             
@@ -108,7 +128,7 @@
             let date_string = YYYY + "/" + mm + "/" + dd;
             let time = hh + "/" + min;
 
-            const data = {
+            data = {
                 request: "checkin",
                 first: fname.value,
                 last: lname.value,
@@ -121,25 +141,47 @@
             try {
                 fail.style.display = "none";
                 login_false.style.display = "none";
-                let received_data = await wait();
-                current_req = await fetch('/api/current_req');
-                current_req = await current_req.json();
-                current_req = current_req.current_req;
-                receiving_req = -1
-                mod.style.display =  "block";
 
-                let verify = 0
-                if(verify === 0) {
-                    // if Object.keys(received_data).length === 0
+                let received_data = await wait();
+                let gar_data = received_data;
+                delete gar_data['request'];
+                delete gar_data['req_num'];
+                delete gar_data['hasSpot'];
+
+                let verify = 3
+                if(Object.keys(received_data).length == 0) {
                     mod.style.display =  "none";
                     fail.style.display = "block";
                     login_false.style.display = "none";
-                } else if (verify === 1){
-                    // if !received_data.verify
+                } 
+                // else if (received_data.verify){
+                //     mod.style.display =  "none";
+                //     fail.style.display = "none";
+                //     login_false.style.display = "block";
+                // } 
+                else if(Object.keys(received_data).length > 0) {
+                    garage.style.display = "block"
                     mod.style.display =  "none";
                     fail.style.display = "none";
-                    login_false.style.display = "block";
-                } else {
+                    let gar_data = {
+                        '0-1':1,
+                        '0-2':0,
+                        '0-3':1,
+                        '0-4':0,
+                        '0-5':0,
+                        '0-6':1,
+                        '0-7':1,
+                        '0-8':0,
+                        '0-9':0,
+                        '1-1':1,
+                        '1-2':0,
+                        '1-3':1,
+                        '1-4':1,
+                        '1-5':0,
+                        '1-6':0,
+                    }
+
+                    garageSetup(gar_data);
                     spot.innerHTML = received_data.spot;
                     name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
                     phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
@@ -264,6 +306,132 @@
             phone_formatting(field,'revert');
         }
 
+        }
+    </script>
+    <script>
+        // Load DOM elements
+        const frame = document.getElementById("frame");
+        const footer = document.getElementById("footer");
+        let levels = document.getElementsByClassName("level");
+        let rows = document.getElementsByClassName("gridRow");
+        let cells = document.getElementsByClassName("cell");
+        var floor = 0;
+
+        // Converts data from middleware into more accessible data structure
+        function formatData(data) {
+            var formatted_data = {}
+
+            for(var key of Object.keys(data)) {
+                split_key = key.split("-");
+                if(!formatted_data.hasOwnProperty(split_key[0])) {
+                    formatted_data[split_key[0]] = {};
+                }
+                formatted_data[split_key[0]][parseInt(split_key[1])] = data[key];
+            }
+            return formatted_data;
+        }
+
+        // Builds garage DOM elements
+        async function garageSetup(gar_data) {
+            //Sets important constants and variables
+
+            formatted_data = formatData(gar_data);
+
+            makeGarage(formatted_data);
+        }
+
+        // Constructs rows and cells within rows
+        function makeGarage(formatted_data) {
+
+            let counter = document.getElementById("counter");
+            counter.innerHTML = "Level: " + floor;
+            max_spots = -1;
+            for(const value1 of Object.values(formatted_data)) {
+                spots = Object.keys(value1);
+                if(spots.length > max_spots) {
+                    max_spots = spots;
+                }
+            }
+
+
+            // let n = Math.ceil(Math.sqrt(max_spots));
+            let n = Math.ceil(Math.sqrt(10));
+
+            for(const [key, value2] of Object.entries(formatted_data)) {
+                let level = document.createElement("div");
+                frame.appendChild(level).className = "level";
+                makeGrid(n, level, value2);
+            }
+
+            levels[floor].style.display = "block";
+        }
+
+        // Creates a default grid sized nxn 
+        function makeGrid(n, level, spots) {
+            let spot_numbers = Object.keys(spots);
+            makeCells(n, level, spot_numbers, spots);
+        }
+
+        // Creates cells (one-to-one mapping of parking spaces)
+        function makeCells(n, level, spot_numbers, spots) {
+            row = 0
+            let row_grid = null;
+            for(let i = 0; i < spot_numbers.length; i++) { 
+                if(i%n == 0) {
+                    row++;
+                    row_grid = document.createElement("div");
+                    level.appendChild(row_grid).className = "gridRow";
+                }
+                let newCell = document.createElement("div");
+                newCell.innerHTML = spot_numbers[i];
+                row_grid.appendChild(newCell).className = "cell";
+    
+                if(spots[spot_numbers[i]] == 1) {
+                    newCell.classList.add("unavailable");
+                }
+                else {
+                    newCell.setAttribute("onclick", "sendData(" + newCell.innerHTML +")");
+                    newCell.classList.add("available");
+                }
+            }
+        }
+
+        // Displays the next floor of the garage to user if it exists
+        function nextFloor() {
+            if(floor < levels.length-1) {
+                levels[floor].style.display = "none";
+                floor = floor + 1;
+                levels[floor].style.display = "block";
+                counter.innerHTML = "Level: " + floor;
+            }
+        }
+        // Displays the previous floor of the garage to user if it exists
+        function backFloor() {
+            if(floor > 0) {
+                levels[floor].style.display = "none";
+                floor = floor - 1;
+                levels[floor].style.display = "block";
+                counter.innerHTML = "Level: " + floor;
+            }  
+        }
+        
+        // Pushes the selected car space into the post data and submits the entire post
+        async function sendData(el) {
+            garage.style.display = "none";
+
+            data.spot = floor + "-" + el;
+
+            post('/api/request', data);
+
+            mod.style.display = "block";
+
+            console.log(data);
+
+            dates = data.start_time.split('/');
+
+            name_display.innerHTML = "<b>Full name: </b>" + data.first + " " + data.last;
+            start.innerHTML = "<b>Registration Date: </b>" + dates[1] + '/' + dates[2] + '/' + dates[0];
+            spot.innerHTML = "<b>" + floor + "-" + el + "</b>";
         }
     </script>
 </body>
