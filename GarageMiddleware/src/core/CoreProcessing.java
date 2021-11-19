@@ -268,7 +268,7 @@ public class CoreProcessing {
             case "checkin":
                 Daily dailyUser = new Daily(Integer.parseInt(ID), first, last);
                 dailyUser.setTimeIn(startTime);
-                postGarage(req_num);
+                dailyUser.setSpot(spot)
                 // Get user's spot from
                 garage.checkIn(dailyUser);
                 break;
