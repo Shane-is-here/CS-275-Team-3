@@ -16,8 +16,8 @@ app.post('/api/request', async function (request, response) {
     let data = request.body;
     console.log(data);
     current_req++;
-    user_request = data
-    user_request.req_num = current_req
+    user_request = data;
+    user_request.req_num = current_req;
     response.status(200).send(data);
 })
 app.get('/api/request', async function (request, response) {
