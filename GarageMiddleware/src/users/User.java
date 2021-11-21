@@ -19,6 +19,8 @@ public class User {
     protected String firstName;
     // String containing the User's last name
     protected String lastName;
+    // String containing the User's phone number
+    protected String phone;
     
     /**
      * Constructor for the User class
@@ -132,7 +134,11 @@ public class User {
         return lastName;
     }
     
-    public void saveToDB(){
-        // Insert way to save to the database
+    public void setPhone(String phoneNum){
+        this.phone = phoneNum;
+    }
+    
+    public String getPhone(){
+        return this.phone;
     }
  }    
