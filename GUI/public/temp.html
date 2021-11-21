@@ -12,14 +12,15 @@
 </head>
 <body>
     <div class="page">
-        <div class="modal">
+        <div class="modal" id="mod1">
             <div class="close">
                 <img id="close" src="/img/close-svgrepo-com.svg" alt="">
             </div>
             <div class="alert-container">
                 <div class="alert">
-                    <h2>Thanks For Parking With Us!</h2>
-                    <p>Enjoy your stay</p>
+                    <h2 class="pass1">Please review your information</h2>
+                    <h2 class="pass2">Thank you for staying!</h2>
+                    <p class="pass2">Please keep track of your ID.</p>
                 </div>
                 <div class="alert id">
                     <div class="info">
@@ -27,12 +28,15 @@
                             <li id="name-display">Full Name: </li>
                             <li id="phone-display">Phone Number: </li>
                             <li id="start-display">Start Time: </li>
+                            <li id="id" class="pass2">ID: </li>
                         </ul>
+                        <fieldset class="pass1">
+                            <input type="button" name="submit" id="submit2" class="submit" value="Continue">
+                        </fieldset>
                         <div class="spot-container">
-                            <h2 class="h2">ID: </h2>
-                            <p>Your spot:</p>
-                            <div class="spot"></div>
-                        </div>  
+                            <p class="pass2">Spot:</p>
+                            <div class="pass2 spot"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,7 +65,7 @@
                     </fieldset>
                     <p class="terms">This garage's short-term payment option charges by the half-hour. Each half-hour, you will be charged an additional $5 will. Your payment will be processed during check-out. Thank you and enjor your stay.</p>
                     <fieldset>
-                        <input type="button" name="submit" id="submit" value="Submit">
+                        <input type="button" name="submit" id="submit1" class="submit" value="Submit">
                     </fieldset>
                 </form>
             </div>
@@ -86,7 +90,8 @@
     </div>
     <div class="block"></div>
     <script>
-        let submit = document.getElementById('submit');
+        let submit = document.getElementById('submit1');
+        let submit2 = document.getElementById('submit2');
         let spot = document.querySelector('.spot');
         let close = document.querySelector('.close');
         let fail = document.getElementById('fail');
@@ -94,8 +99,10 @@
 
         // User check block
         let block = document.querySelector('.block');
-        let mod = document.querySelector('.modal');
-        let h2 = document.querySelector('.h2');
+        let mod1 = document.getElementById('mod1');
+        let mod2 = document.getElementById('mod2');
+        let h2 = document.querySelector('h2');
+        let id = document.getElementById('id');
 
         let name_display = document.getElementById('name-display');
         let phone_display = document.getElementById('phone-display');
@@ -106,6 +113,9 @@
         let fname = document.getElementById('fname');
         let lname = document.getElementById('lname');
         let garage = document.getElementById('garage');
+
+        let pass1 = document.querySelectorAll('.pass1');
+        let pass2 = document.querySelectorAll('.pass2');
 
         pnum.onkeyup = function(e) {
             phone_number_check(this,e);
@@ -125,90 +135,75 @@
             let hh = d.getHours();
             let min = d.getMinutes();
 
-            let date_string = YYYY + "/" + mm + "/" + dd;
-            let time = hh + "/" + min;
+            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
+
+
+            let gar_request = {
+                request: "garage",
+            };
+
+            post('/api/request', gar_request);
 
             data = {
                 request: "checkin",
                 first: fname.value,
                 last: lname.value,
-                phone: pnum.value,
-                start_time: date_string + '/' + time,
-            };
+                datetime: datetime,
+                pnum: pnum.value
+            }
 
-            post('/api/request', data);
+            fail.style.display = "none";
+            login_false.style.display = "none";
 
-            try {
-                fail.style.display = "none";
-                login_false.style.display = "none";
+            let received_data = await wait();
+        
+            let gar_data = received_data;
+            delete gar_data['request'];
+            delete gar_data['req_num'];
+            delete gar_data['hasSpot'];
 
-                let received_data = await wait();
-                let gar_data = received_data;
-                delete gar_data['request'];
-                delete gar_data['req_num'];
-                delete gar_data['hasSpot'];
-
-                let verify = 3
-                if(Object.keys(received_data).length == 0) {
-                    mod.style.display =  "none";
+            if(Object.keys(received_data).length == 0) {
+                    mod1.style.display =  "none";
                     fail.style.display = "block";
                     login_false.style.display = "none";
                 } 
-                // else if (received_data.verify){
-                //     mod.style.display =  "none";
-                //     fail.style.display = "none";
-                //     login_false.style.display = "block";
-                // } 
-                else if(Object.keys(received_data).length > 0) {
-                    garage.style.display = "block"
-                    mod.style.display =  "none";
-                    fail.style.display = "none";
-                    let gar_data = {
-                        '0-1':1,
-                        '0-2':0,
-                        '0-3':1,
-                        '0-4':0,
-                        '0-5':0,
-                        '0-6':1,
-                        '0-7':1,
-                        '0-8':0,
-                        '0-9':0,
-                        '1-1':1,
-                        '1-2':0,
-                        '1-3':1,
-                        '1-4':1,
-                        '1-5':0,
-                        '1-6':0,
-                    }
+            else if(Object.keys(received_data).length > 0) {
+                garage.style.display = "block"
+                mod1.style.display =  "none";
+                fail.style.display = "none";
 
-                    garageSetup(gar_data);
-                    spot.innerHTML = received_data.spot;
-                    name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
-                    phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
-                    start_display.innerHTML = "<b>Start Time: </b>" + mm + "/" + dd + "/" + YYYY + " " + hh + ":" + min;
-                    h2.innerHTML = "<b>ID: </b>" + received_data.id;
-                }
-                
-            } catch {
-                mod.style.display =  "none";
-                fail.style.display = "block";
+                garageSetup(gar_data);
+                name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
+                phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
+                start_display.innerHTML = "<b>Start Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
             }
 
             block.style.display = "none";
         });
 
-        close.addEventListener('click', async () => {
-            let mod = document.querySelector('.modal');
-            mod.style.display = "none";    
+        submit2.addEventListener('click', async () => {
+            block.style.display = "block";
+            
+            post('/api/request', data);
 
-            fetch('/api/request?req_num=1')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            let received_data = await wait();
+            
+            pass1.forEach(el => el.style.display = "none");
+            submit2.style.display = "none";
+            pass2.forEach(el => el.style.display = "block");
+            id.innerHTML = "<b>ID: </b>" + received_data.ID;
+            id.style.display = "block";
+
+            block.style.display = "none";
+        });
+
+        close.addEventListener('click', async () => {
+            mod1.style.display = "none";   
+            pass1.forEach(el => el.style.display = "block");
+            submit2.style.display = "block";
+            pass2.forEach(el => el.style.display = "none");
+            let levelsQ = document.querySelectorAll(".level");
+            levelsQ.forEach(el => el.remove());
         });
 
     </script>
@@ -312,6 +307,7 @@
         // Load DOM elements
         const frame = document.getElementById("frame");
         const footer = document.getElementById("footer");
+        
         let levels = document.getElementsByClassName("level");
         let rows = document.getElementsByClassName("gridRow");
         let cells = document.getElementsByClassName("cell");
@@ -421,16 +417,12 @@
 
             data.spot = floor + "-" + el;
 
-            post('/api/request', data);
+            mod1.style.display = "block";
 
-            mod.style.display = "block";
-
-            console.log(data);
-
-            dates = data.start_time.split('/');
+            
 
             name_display.innerHTML = "<b>Full name: </b>" + data.first + " " + data.last;
-            start.innerHTML = "<b>Registration Date: </b>" + dates[1] + '/' + dates[2] + '/' + dates[0];
+            // start.innerHTML = start_display.innerHTML
             spot.innerHTML = "<b>" + floor + "-" + el + "</b>";
         }
     </script>
