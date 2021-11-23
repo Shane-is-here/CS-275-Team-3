@@ -17,9 +17,9 @@ import DatabaseInterface.*;
  * @author brenden
  */
 public class CoreProcessing {
-
+    static int userID;
     static Garage garage = new Garage(7, 8);
-
+    
     /**
      *
      * @param args
@@ -27,6 +27,13 @@ public class CoreProcessing {
     public static void main(String[] args) {
         getRequests();
         //Daily p = DBInterface.getDaily(4);
+        /*Daily user = new Daily(2, "John", "Smith");
+        user.setSpot("0-0");
+        user.setTimeIn("2021/11/19/10/11");
+        DBInterface dbinterface = new DBInterface();
+        dbinterface.saveUser(user);
+        Daily p = dbinterface.getDaily(22);*/
+        
     }
 
     /**
@@ -36,6 +43,7 @@ public class CoreProcessing {
         // Holds the previous request number from the actual request to prevent
         // duplicate requests from coming through
         String prevReqNum = "";
+        userID = DBInterface.getMostRecentID();
         // Holds the number of times the program couldn't connect to the site
         int webErrorCount = 0;
         do {
@@ -173,7 +181,7 @@ public class CoreProcessing {
         String last = "";
         String phone = "";
         String startTime = "";
-        String ID = "1";
+        String ID = "";
         String endTime = "";
         String spot = "";
         String username = "";
@@ -266,11 +274,14 @@ public class CoreProcessing {
         // Check to see what function is requested
         switch (function) {
             case "checkin":
-                Daily dailyUser = new Daily(Integer.parseInt(ID), first, last);
+                // Increment the ID number
+                userID++;
+                Daily dailyUser = new Daily(userID, first, last);
                 dailyUser.setTimeIn(startTime);
-                dailyUser.setSpot(spot)
-                // Get user's spot from
+                dailyUser.setSpot(spot);
+                dailyUser.setPhone(phone);
                 garage.checkIn(dailyUser);
+                postID(req_num);
                 break;
             case "checkout":
                 // Use the ID to pull a User class from the DB
@@ -279,7 +290,8 @@ public class CoreProcessing {
                 // Call checkOut method
                 break;
             case "register":
-                LongTerm longUser = new LongTerm(Integer.parseInt(ID), first, last);
+                userID++;
+                LongTerm longUser = new LongTerm(userID, first, last);
                 longUser.setUsername(username);
                 longUser.setTimeIn(startTime);
                 longUser.setPassword(password);
@@ -289,6 +301,7 @@ public class CoreProcessing {
                 longUser.setEmail(email);
                 longUser.setSpot(spot);
                 garage.checkIn(longUser);
+                postID(req_num);
                 break;
 
             // These 3 are dependent on the database being completed
@@ -304,6 +317,7 @@ public class CoreProcessing {
             case "garage":
                 postGarage(req_num);
                 break;
+                
             default:
                 break;
 
@@ -335,6 +349,24 @@ public class CoreProcessing {
         }
         
         
+    }
+    
+    
+    public static void postID(String req_num){
+        try{
+            
+        String uri = "http://localhost:3000/api/receive";
+        RequestHandler r = new RequestHandler(uri);
+        int reqInt = Integer.parseInt(req_num);
+        
+        String postString = "{\"request\":\"ID\",\"req_num\":"+ reqInt +",\"ID\":"
+                + "\"" + userID + "\"}";
+            
+        r.postRequest(postString);
+        }
+        catch(Exception e){
+            
+        }
         
         
     }
