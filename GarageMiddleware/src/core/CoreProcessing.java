@@ -17,9 +17,9 @@ import DatabaseInterface.*;
  * @author brenden
  */
 public class CoreProcessing {
-    static int userID;
+
     static Garage garage = new Garage(7, 8);
-    
+    static int userID;
     /**
      *
      * @param args
@@ -33,7 +33,6 @@ public class CoreProcessing {
         DBInterface dbinterface = new DBInterface();
         dbinterface.saveUser(user);
         Daily p = dbinterface.getDaily(22);*/
-        
     }
 
     /**
@@ -43,7 +42,6 @@ public class CoreProcessing {
         // Holds the previous request number from the actual request to prevent
         // duplicate requests from coming through
         String prevReqNum = "";
-        userID = DBInterface.getMostRecentID();
         // Holds the number of times the program couldn't connect to the site
         int webErrorCount = 0;
         do {
@@ -274,7 +272,6 @@ public class CoreProcessing {
         // Check to see what function is requested
         switch (function) {
             case "checkin":
-                // Increment the ID number
                 userID++;
                 Daily dailyUser = new Daily(userID, first, last);
                 dailyUser.setTimeIn(startTime);
@@ -284,15 +281,20 @@ public class CoreProcessing {
                 postID(req_num);
                 break;
             case "checkout":
+                // --  we will at some point need to send through which 
+                // --  type of user so we can differentiate who is being checked
+                // --  out
                 // Use the ID to pull a User class from the DB
-                
+                Daily dUser = DBInterface.getDaily(Integer.parseInt(ID));
                 // Set the timeOut
                 // Call checkOut method
+                garage.checkOut(dUser);
+                
                 break;
             case "register":
                 userID++;
                 LongTerm longUser = new LongTerm(userID, first, last);
-                longUser.setUsername(username);
+                //longUser.setUsername(username);
                 longUser.setTimeIn(startTime);
                 longUser.setPassword(password);
                 String paymentInfo = cardNum + "/" + expiration + "/" + securityCode
@@ -317,7 +319,6 @@ public class CoreProcessing {
             case "garage":
                 postGarage(req_num);
                 break;
-                
             default:
                 break;
 
@@ -349,10 +350,11 @@ public class CoreProcessing {
         }
         
         
+        
+        
     }
     
-    
-    public static void postID(String req_num){
+     public static void postID(String req_num){
         try{
             
         String uri = "http://localhost:3000/api/receive";
@@ -371,7 +373,7 @@ public class CoreProcessing {
         
     }
     
-    public static void GUIcheckOut(String ID, String paymentInfo, String timeOut) {
+     public static void GUIcheckOut(String ID, String paymentInfo, String timeOut) {
         /* TODO make this section actually use info from the middleware
         (For testing purposes) Put data into a HashMap to POST to the GUI*/
         
@@ -379,7 +381,8 @@ public class CoreProcessing {
         // Compare timeIn and timeOut
         
         // Calculate amount owed
-        double amountOwed = garage.checkOut(Integer.parseInt(ID), "daily");
+        Daily dailyUser = DBInterface.getDaily(Integer.parseInt(ID));
+        double amountOwed = garage.checkOut(dailyUser);
         
         try{
             
