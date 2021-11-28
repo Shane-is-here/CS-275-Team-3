@@ -147,6 +147,31 @@ public class Garage {
 
     }
 
+    
+    public double checkOut(Daily dailyUser){
+         String userSpot = dailyUser.getSpot();
+         double amountOwed;
+         double toReturn;
+            _garageMap.put(userSpot, 0);
+            // -- and generate their payment
+            amountOwed = generatePayment(dailyUser);
+
+            toReturn = amountOwed;
+            return toReturn;
+    }
+    
+    public double checkOut(LongTerm longUser){
+       String userSpot = longUser.getSpot();
+         double amountOwed;
+         double toReturn;
+            _garageMap.put(userSpot, 0);
+            // -- and generate their payment
+            amountOwed = generatePayment(longUser);
+
+            toReturn = amountOwed;
+            return toReturn;
+    }
+    
     /**
      * In this method, we get which type of user we have, in order to tell how
      * to check out
@@ -157,46 +182,7 @@ public class Garage {
      * @param userType
      * @return
      */
-    public double checkOut(int id, String userType) {
-        // -- this will be determined by getting information from the db
-
-        // -- if the user is a long term we will get their information from the 
-        // -- database and call functions
-        double toReturn;
-        double amountOwed;
-
-        if (userType.equals("longTerm")) {
-            // -- we get the user from the database based on their id info
-            LongTerm p = dbInterface.getLongTerm(id);
-
-            // -- then we get their spot information and empty it out
-            String userSpot = p.getSpot();
-            _garageMap.put(userSpot, 0);
-
-            // -- next we determine how much they owe by generating their payment
-            amountOwed = generatePayment(p);
-
-            toReturn = amountOwed;
-
-        } // -- if they arent a long term user, they are a daily user
-        else {
-            // -- we still generate the user based on their id number
-
-            Daily p = dbInterface.getDaily(id);
-
-            // -- likewise we get their spot and open it in the garage structure
-            String userSpot = p.getSpot();
-
-            _garageMap.put(userSpot, 0);
-            // -- and generate their payment
-            amountOwed = generatePayment(p);
-
-            toReturn = amountOwed;
-        }
-
-        return toReturn;
-
-    }
+    
 
     /**
      * here we generate the payment based on the length of stay we calculate the
