@@ -42,7 +42,7 @@ public class Garage {
         // -- these are how many spots and floors we have
         _floors = floors;
         _spots = spots;
-        _idToSave = _mostRecentID++;
+        _idToSave = _mostRecentID+1;
         // -- this is the map keeping track of spots from the garage
         Map<String, Integer> _garageMapFromDB = dbInterface.getGarageSpots();
 
@@ -63,6 +63,11 @@ public class Garage {
 
     }
 
+    public int getID(){
+        return this._idToSave;
+    }
+    
+    
     public Map<String, Integer> getGarageMap() {
         return this._garageMap;
     }
