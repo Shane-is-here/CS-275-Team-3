@@ -19,20 +19,16 @@ import DatabaseInterface.*;
 public class CoreProcessing {
 
     static Garage garage = new Garage(7, 8);
-    static int userID;
+
     /**
      *
      * @param args
      */
     public static void main(String[] args) {
+        System.out.println(garage.getID());
         getRequests();
         //Daily p = DBInterface.getDaily(4);
-        /*Daily user = new Daily(2, "John", "Smith");
-        user.setSpot("0-0");
-        user.setTimeIn("2021/11/19/10/11");
-        DBInterface dbinterface = new DBInterface();
-        dbinterface.saveUser(user);
-        Daily p = dbinterface.getDaily(22);*/
+
     }
 
     /**
@@ -189,7 +185,6 @@ public class CoreProcessing {
         String expiration = "";
         String securityCode = "";
         String zipCode = "";
-
         // Loop through the List in order to use the data within
         for (int i = 1; i < data.size() - 1; i++) {
             // Split the current entry based on where the ':' is
@@ -257,7 +252,7 @@ public class CoreProcessing {
                 case "spot":
                     spot = value;
                     break;
-                    
+
                 default:
                     break;
 
@@ -272,13 +267,12 @@ public class CoreProcessing {
         // Check to see what function is requested
         switch (function) {
             case "checkin":
-                userID++;
-                Daily dailyUser = new Daily(userID, first, last);
+                Daily dailyUser = new Daily(garage.getID(), first, last);
                 dailyUser.setTimeIn(startTime);
                 dailyUser.setSpot(spot);
                 dailyUser.setPhone(phone);
-                garage.checkIn(dailyUser);
                 postID(req_num);
+                garage.checkIn(dailyUser);
                 break;
             case "checkout":
                 // --  we will at some point need to send through which 
@@ -289,11 +283,10 @@ public class CoreProcessing {
                 // Set the timeOut
                 // Call checkOut method
                 garage.checkOut(dUser);
-                
+
                 break;
             case "register":
-                userID++;
-                LongTerm longUser = new LongTerm(userID, first, last);
+                LongTerm longUser = new LongTerm(garage.getID(), first, last);
                 //longUser.setUsername(username);
                 longUser.setTimeIn(startTime);
                 longUser.setPassword(password);
@@ -326,91 +319,80 @@ public class CoreProcessing {
 
     }
 
-    public static void postGarage(String req_num){
-        try{
-            
-        String uri = "http://localhost:3000/api/receive";
-        RequestHandler r = new RequestHandler(uri);
-        var objectMapper = new ObjectMapper();
-        int reqInt = Integer.parseInt(req_num);
-        
-        String postString = "{\"request\":\"garage\",\"req_num\":"+ reqInt +","
-                + "\"hasSpot\":\"true\",";
-            
-        String garageBody;
+    public static void postGarage(String req_num) {
+        try {
+
+            String uri = "http://localhost:3000/api/receive";
+            RequestHandler r = new RequestHandler(uri);
+            var objectMapper = new ObjectMapper();
+            int reqInt = Integer.parseInt(req_num);
+
+            String postString = "{\"request\":\"garage\",\"req_num\":" + reqInt + ","
+                    + "\"hasSpot\":\"true\",";
+
+            String garageBody;
             garageBody = objectMapper.writeValueAsString(garage.getGarageMap());
             System.out.println(garageBody);
-        postString = postString + garageBody.substring(1);
-        System.out.println(postString);
-        
-        r.postRequest(postString);
+            postString = postString + garageBody.substring(1);
+            System.out.println(postString);
+
+            r.postRequest(postString);
+        } catch (Exception e) {
+
         }
-        catch(Exception e){
-            
-        }
-        
-        
-        
-        
+
     }
-    
-     public static void postID(String req_num){
-        try{
-            
-        String uri = "http://localhost:3000/api/receive";
-        RequestHandler r = new RequestHandler(uri);
-        int reqInt = Integer.parseInt(req_num);
-        
-        String postString = "{\"request\":\"ID\",\"req_num\":"+ reqInt +",\"ID\":"
-                + "\"" + userID + "\"}";
-            
-        r.postRequest(postString);
+
+    public static void postID(String req_num) {
+        try {
+
+            String uri = "http://localhost:3000/api/receive";
+            RequestHandler r = new RequestHandler(uri);
+            int reqInt = Integer.parseInt(req_num);
+            int nextID = garage.getID();
+            System.out.println(nextID);
+            String postString = "{\"request\":\"ID\",\"req_num\":" + reqInt + ",\"ID\":"
+                    + "\"" + nextID + "\"}";
+
+            r.postRequest(postString);
+        } catch (Exception e) {
+
         }
-        catch(Exception e){
-            
-        }
-        
-        
+
     }
-    
-     public static void GUIcheckOut(String ID, String paymentInfo, String timeOut) {
+
+    public static void GUIcheckOut(String ID, String paymentInfo, String timeOut) {
         /* TODO make this section actually use info from the middleware
         (For testing purposes) Put data into a HashMap to POST to the GUI*/
-        
-        
+
         // Compare timeIn and timeOut
-        
         // Calculate amount owed
         Daily dailyUser = DBInterface.getDaily(Integer.parseInt(ID));
         double amountOwed = garage.checkOut(dailyUser);
-        
-        try{
-            
-        // Create a RequestHandler object to be used for POSTing data to the GUI
-        String uri = "http://localhost:3000/api/receive";
-        RequestHandler r = new RequestHandler(uri);
 
-        HashMap<String, String> postMap = new HashMap<>();
-        
-        
+        try {
 
-        
-        // Convert the HashMap into a String so that the GUI can understand it
-        var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper
-                .writeValueAsString(postMap);
+            // Create a RequestHandler object to be used for POSTing data to the GUI
+            String uri = "http://localhost:3000/api/receive";
+            RequestHandler r = new RequestHandler(uri);
 
-        // Send the POST request
-        r.postRequest(requestBody);
-        //String garageBody = objectMapper
-                //.writeValueAsString(garage.getGarageMap());
+            HashMap<String, String> postMap = new HashMap<>();
 
-        //r.postRequest(garageBody);
-        }
-        catch (Exception e){
+            // Convert the HashMap into a String so that the GUI can understand it
+            var objectMapper = new ObjectMapper();
+            String requestBody = objectMapper
+                    .writeValueAsString(postMap);
+
+            // Send the POST request
+            r.postRequest(requestBody);
+            //String garageBody = objectMapper
+            //.writeValueAsString(garage.getGarageMap());
+
+            //r.postRequest(garageBody);
+        } catch (Exception e) {
             System.out.println(e);
         }
-        
+
     }
 
     public static void sendToGUI(LongTerm p) {
