@@ -130,7 +130,7 @@
                     mod.style.display =  "none";
                     fail.style.display = "block";
                 }
-                payment.innerHTML = "<b>$" + received_data.payment + "</b>";
+                payment.innerHTML = "<b>$" + received_data.amount_owed + "</b>";
                 name.innerHTML = "<b>Full name: </b>" + received_data.first + " " + received_data.last;
                 start.innerHTML = "<b>Start Time: </b>" + received_data.start_time;
                 finish.innerHTML = "<b>End Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
