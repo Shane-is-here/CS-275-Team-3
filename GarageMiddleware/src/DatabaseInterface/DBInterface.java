@@ -59,15 +59,15 @@ public class DBInterface {
     public boolean saveUser(Daily p) {
         String firstName = p.getFirstName();
         String lastName = p.getLastName();
-        String emailToSave = "";
+        String emailToSave = " ";
         int idToSave = p.getID();
-        String phoneToSave = "";
+        String phoneToSave = " ";
         String spotToSave = p.getSpot();
         String timeInToSave = p.getTimeIn();
         String userType = "daily";
-        String cardInfo = "";
-        String zipCode = "";
-        String password = "";
+        String cardInfo = " ";
+        String zipCode = " ";
+        String password = " ";
 
         Database.saveFile(firstName, lastName, password, Integer.toString(idToSave),
                 cardInfo, emailToSave, timeInToSave, spotToSave, phoneToSave, zipCode, userType);
@@ -86,7 +86,7 @@ public class DBInterface {
      * @return
      */
     public boolean saveGarageSpots(Map<String, Integer> _garageMap) {
-
+        Database.garageSaveState(_garageMap);
         // -- we save the map into the Database, likely by deconstructing it
         // -- our return value will be whether or not the save is successful
         return true;
@@ -100,7 +100,8 @@ public class DBInterface {
      */
     public Map<String, Integer> getGarageSpots() {
         // -- the get method that will return the garagespots
-        Map<String, Integer> _garageMap = new HashMap<>();
+        Map<String, Integer> _garageMap;
+        _garageMap = Database.retrieveGarageData();
         return _garageMap;
 
     }
@@ -113,6 +114,7 @@ public class DBInterface {
      * @param id
      * @return
      */
+    
     public static LongTerm getLongTerm(int id) {
         LongTerm p = new LongTerm(id, "Jacob", "Dunst");
         return p;
@@ -156,11 +158,8 @@ public class DBInterface {
         return mostRecentId;
     }
 
-    /*
-    public static void main(String[] args){
-
-        getDaily("1");
+    /*public static void main(String[] args){
         
-    }*/
-    
+    }
+    */
 }
