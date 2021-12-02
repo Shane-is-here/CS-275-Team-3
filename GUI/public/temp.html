@@ -119,6 +119,8 @@
         let pass1 = document.querySelectorAll('.pass1');
         let pass2 = document.querySelectorAll('.pass2');
 
+        let num_available = [];
+
         pnum.onkeyup = function(e) {
             phone_number_check(this,e);
         }
@@ -139,7 +141,6 @@
 
             let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
 
-
             let gar_request = {
                 request: "garage",
             };
@@ -158,11 +159,6 @@
             login_false.style.display = "none";
 
             let received_data = await wait();
-        
-            let gar_data = received_data;
-            delete gar_data['request'];
-            delete gar_data['req_num'];
-            delete gar_data['hasSpot'];
 
             if(Object.keys(received_data).length == 0) {
                     mod1.style.display =  "none";
@@ -176,7 +172,9 @@
                 fail.style.display = "none";
                 origin.style.display = "none";
 
-                garageSetup(gar_data);
+                num_available = received_data['spotsOpen'];
+
+                makeGarage(received_data);
                 name_display.innerHTML = "<b>Full name: </b>" + fname.value + " " + lname.value;
                 phone_display.innerHTML = "<b>Phone Number: </b>" + pnum.value;
                 start_display.innerHTML = "<b>Start Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
@@ -328,6 +326,7 @@
         let levels = document.getElementsByClassName("level");
         let rows = document.getElementsByClassName("gridRow");
         let cells = document.getElementsByClassName("cell");
+        let spots_available = document.getElementById("spots-available");
         var floor = 0;
 
         // Converts data from middleware into more accessible data structure
@@ -344,41 +343,43 @@
             return formatted_data;
         }
 
-        // Builds garage DOM elements
-        async function garageSetup(gar_data) {
-            //Sets important constants and variables
-
-            formatted_data = formatData(gar_data);
-
-            makeGarage(formatted_data);
-        }
 
         // Constructs rows and cells within rows
-        function makeGarage(formatted_data) {
-
+        function makeGarage(received_data) {
             let counter = document.getElementById("counter");
-            let spots_available = document.getElementById("spots-available");
+            let gar_data = received_data;
+            delete gar_data['request'];
+            delete gar_data['req_num'];
+            delete gar_data['hasSpot'];
+            delete gar_data['spotsOpen'];
+
+            let formatted_data = formatData(gar_data);
+
+            
             counter.innerHTML = "Level: " + floor;
             max_spots = -1;
+
             for(const value1 of Object.values(formatted_data)) {
                 spots = Object.keys(value1);
                 if(spots.length > max_spots) {
-                    max_spots = spots;
+                    max_spots = spots.length;
                 }
             }
+            
+            if(max_spots == -1) {
+                max_spots = 10
+            }
 
-
-            // let n = Math.ceil(Math.sqrt(max_spots));
-            let n = Math.ceil(Math.sqrt(10));
+            let n = Math.ceil(Math.sqrt(max_spots));
 
             for(const [key, value2] of Object.entries(formatted_data)) {
-                console.log(key, value2);
                 let level = document.createElement("div");
                 frame.appendChild(level).className = "level";
                 makeGrid(n, level, value2);
             }
 
             levels[floor].style.display = "block";
+            spots_available.innerHTML = "Spots Available: " + num_available[floor];
         }
 
         // Creates a default grid sized nxn 
@@ -416,6 +417,7 @@
             if(floor < levels.length-1) {
                 levels[floor].style.display = "none";
                 floor = floor + 1;
+                spots_available.innerHTML = "Spots Available: " + num_available[floor];
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }
@@ -425,6 +427,7 @@
             if(floor > 0) {
                 levels[floor].style.display = "none";
                 floor = floor - 1;
+                spots_available.innerHTML = "Spots Available: " + num_available[floor];
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }  
@@ -437,8 +440,6 @@
             data.spot = floor + "-" + el;
 
             mod1.style.display = "block";
-
-            
 
             name_display.innerHTML = "<b>Full name: </b>" + data.first + " " + data.last;
             // start.innerHTML = start_display.innerHTML
