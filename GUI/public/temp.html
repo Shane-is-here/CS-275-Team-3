@@ -80,6 +80,7 @@
             <div class="footer">
                 <div id="frame">
                     <h2 id="counter">Level: </h2>
+                    <h2 id="spots-available">Spots Available:</h2>
                 </div>
                 <div class="selection">
                     <button class="select-floor" onclick="nextFloor()">Level Up</button>
@@ -190,12 +191,24 @@
             post('/api/request', data);
 
             let received_data = await wait();
-            
-            pass1.forEach(el => el.style.display = "none");
-            submit2.style.display = "none";
-            pass2.forEach(el => el.style.display = "block");
-            id.innerHTML = "<b>ID: </b>" + received_data.ID;
-            id.style.display = "block";
+
+            if (Object.keys(received_data).length == 0) {
+                fail.style.display = "block";
+                mod1.style.display = "none";   
+                pass1.forEach(el => el.style.display = "block");
+                submit2.style.display = "block";
+                pass2.forEach(el => el.style.display = "none");
+                let levelsQ = document.querySelectorAll(".level");
+                levelsQ.forEach(el => el.remove());
+                origin.style.display = "block";
+
+            } else {
+                pass1.forEach(el => el.style.display = "none");
+                submit2.style.display = "none";
+                pass2.forEach(el => el.style.display = "block");
+                id.innerHTML = "<b>ID: </b>" + received_data.ID;
+                id.style.display = "block";
+            }
 
             block.style.display = "none";
         });
@@ -344,6 +357,7 @@
         function makeGarage(formatted_data) {
 
             let counter = document.getElementById("counter");
+            let spots_available = document.getElementById("spots-available");
             counter.innerHTML = "Level: " + floor;
             max_spots = -1;
             for(const value1 of Object.values(formatted_data)) {
@@ -358,6 +372,7 @@
             let n = Math.ceil(Math.sqrt(10));
 
             for(const [key, value2] of Object.entries(formatted_data)) {
+                console.log(key, value2);
                 let level = document.createElement("div");
                 frame.appendChild(level).className = "level";
                 makeGrid(n, level, value2);
