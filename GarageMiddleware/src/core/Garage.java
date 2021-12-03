@@ -97,8 +97,8 @@ public int getID() {
     private void adjustSpotsOpen(boolean isCheckingIn, String floorSpot){
         
         int firstDash = floorSpot.indexOf("-");
-        String floor = floorSpot.substring(firstDash);
-        int intFloor = Integer.getInteger(floor);
+        String floor = floorSpot.substring(0,firstDash);
+        int intFloor = Integer.parseInt(floor);
         if (isCheckingIn){
             _openSpots[intFloor]++;
         } else{
