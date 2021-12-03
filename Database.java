@@ -216,14 +216,21 @@ public class Database {
       System.out.println("An error occurred.");
       e.printStackTrace();
     }
+    HashMap toReturn;
 
-    HashMap<String, Integer> toReturn = new HashMap<String, Integer>();
-    String[] pairs = data.split(", ");
-    for (int i = 0; i < pairs.length; i++) {
-        String pair = pairs[i];
-        String[] keyValue = pair.split("=");
-        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1])); 
+    if(data == ""){
+        toReturn = new HashMap<String, Integer>();
+    } else {
+        toReturn = new HashMap<String, Integer>();
+        String[] pairs = data.split(", ");
+        for (int i = 0; i < pairs.length; i++) {
+            String pair = pairs[i];
+            String[] keyValue = pair.split("=");
+            toReturn.put(keyValue[0], Integer.valueOf(keyValue[1]));
+        }
     }
+      
+    
     
     return toReturn; // return
   }
