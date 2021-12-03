@@ -80,7 +80,8 @@
             <div class="footer">
                 <div id="frame">
                     <h2 id="counter">Level: </h2>
-                    <h2 id="spots-available">Spots Available:</h2>
+                    <h4 id="spots-available">Spots Available:</h4>
+                    <h4 id="spots-unavailable">Spots Unavailable:</h4>
                 </div>
                 <div class="selection">
                     <button class="select-floor" onclick="nextFloor()">Level Up</button>
@@ -120,6 +121,7 @@
         let pass2 = document.querySelectorAll('.pass2');
 
         let num_available = [];
+        let total_spots = []
 
         pnum.onkeyup = function(e) {
             phone_number_check(this,e);
@@ -327,6 +329,7 @@
         let rows = document.getElementsByClassName("gridRow");
         let cells = document.getElementsByClassName("cell");
         let spots_available = document.getElementById("spots-available");
+        let spots_unavailable = document.getElementById("spots-unavailable");
         var floor = 0;
 
         // Converts data from middleware into more accessible data structure
@@ -343,7 +346,6 @@
             return formatted_data;
         }
 
-
         // Constructs rows and cells within rows
         function makeGarage(received_data) {
             let counter = document.getElementById("counter");
@@ -355,7 +357,6 @@
 
             let formatted_data = formatData(gar_data);
 
-            
             counter.innerHTML = "Level: " + floor;
             max_spots = -1;
 
@@ -363,12 +364,17 @@
                 spots = Object.keys(value1);
                 if(spots.length > max_spots) {
                     max_spots = spots.length;
+                    
                 }
+                total_spots.push(spots.length);
             }
+
             
             if(max_spots == -1) {
                 max_spots = 10
             }
+
+            console.log(total_spots[floor]-num_available[floor]);
 
             let n = Math.ceil(Math.sqrt(max_spots));
 
@@ -380,6 +386,7 @@
 
             levels[floor].style.display = "block";
             spots_available.innerHTML = "Spots Available: " + num_available[floor];
+            spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
         }
 
         // Creates a default grid sized nxn 
@@ -418,6 +425,7 @@
                 levels[floor].style.display = "none";
                 floor = floor + 1;
                 spots_available.innerHTML = "Spots Available: " + num_available[floor];
+                spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }
@@ -428,6 +436,7 @@
                 levels[floor].style.display = "none";
                 floor = floor - 1;
                 spots_available.innerHTML = "Spots Available: " + num_available[floor];
+                spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }  
