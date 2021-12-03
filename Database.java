@@ -222,7 +222,7 @@ public class Database {
     for (int i = 0; i < pairs.length; i++) {
         String pair = pairs[i];
         String[] keyValue = pair.split("=");
-        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1]));
+        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1])); // possible bug
     }
     
     return toReturn; // return
@@ -231,15 +231,15 @@ public class Database {
   // Used to test functions above
   public static void main(String[] args){
 
-    //System.out.println(retrieveLatestSave());
+    //System.out.println(retrieveLatestSave()); // latest save
 
-    //saveFile("test", "test", "test", "1", "test", "test", "test", "test", "test", "test", "test");
+    //saveFile("test", "test", "test", "2", "test", "test", "test", "test", "test", "test", "test"); // DUMMY SAVE
     //ArrayList two = retrieveData("2");
     //ArrayList one = retrieveData("1");
     //ArrayList three = retrieveData("3");
     //System.out.println(three);
     //System.out.println(two);
-    //System.out.println(retrieveData("1"));
+    //System.out.println(retrieveData("1")); // ID = 1
     /*
       HashMap<String, Integer> hMapNumbers = new HashMap<String, Integer> ();
 
@@ -248,8 +248,9 @@ public class Database {
       hMapNumbers.put("Two", 2);
       hMapNumbers.put("Three", 3);
 
-      garageSaveState(hMapNumbers);
+      garageSaveState(hMapNumbers); // DUMMY GARAGE DATA*/
 
-      retrieveGarageData();*/
+      retrieveGarageData(); // The retrieve function is still being tested. However, it does work under certain scenarios. 
+      // I hope to resolve this bug tomorrow.
   }
 }
