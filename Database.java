@@ -226,12 +226,9 @@ public class Database {
         for (int i = 0; i < pairs.length; i++) {
             String pair = pairs[i];
             String[] keyValue = pair.split("=");
-            toReturn.put(keyValue[0], Integer.valueOf(keyValue[1]));
+            toReturn.put(keyValue[0].replace("{", ""), keyValue[1].replace("{", ""));
         }
     }
-      
-    
-    
     return toReturn; // return
   }
 
@@ -255,8 +252,11 @@ public class Database {
       hMapNumbers.put("Two", 2);
       hMapNumbers.put("Three", 3);
 
-      garageSaveState(hMapNumbers); // DUMMY GARAGE DATA*/
+      garageSaveState(hMapNumbers); // DUMMY GARAGE DATA
+    */
 
-      retrieveGarageData(); 
+    //System.out.println(retrieveGarageData());
+    //HashMap<String, Integer> garage = retrieveGarageData();
+    //System.out.println(garage.get("0-0"));
   }
 }
