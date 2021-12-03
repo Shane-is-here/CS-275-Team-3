@@ -332,6 +332,7 @@ public class CoreProcessing {
             var objectMapper = new ObjectMapper();
             int reqInt = Integer.parseInt(req_num);
 
+            
             String postString = "{\"request\":\"garage\",\"req_num\":" + reqInt + ","
                     + "\"hasSpot\":\"true\",";
 
@@ -339,6 +340,11 @@ public class CoreProcessing {
             garageBody = objectMapper.writeValueAsString(garage.getGarageMap());
             System.out.println(garageBody);
             postString = postString + garageBody.substring(1);
+            String garageSpots = objectMapper.writeValueAsString(garage.getOpenSpots());
+            postString = postString.substring(0, postString.length()-1);
+            postString = postString + ",\"spotsOpen\":[";
+            postString = postString + garageSpots.substring(1,garageSpots.length()-1);
+            postString = postString + "]}";
             System.out.println(postString);
 
             r.postRequest(postString);
@@ -387,6 +393,9 @@ public class CoreProcessing {
 
     }
 
+    
+    
+    
     public static void sendToGUI(LongTerm p) {
 
     }
