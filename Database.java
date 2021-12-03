@@ -222,7 +222,7 @@ public class Database {
     for (int i = 0; i < pairs.length; i++) {
         String pair = pairs[i];
         String[] keyValue = pair.split("=");
-        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1])); // possible bug
+        toReturn.put(keyValue[0], Integer.valueOf(keyValue[1])); 
     }
     
     return toReturn; // return
@@ -250,7 +250,6 @@ public class Database {
 
       garageSaveState(hMapNumbers); // DUMMY GARAGE DATA*/
 
-      retrieveGarageData(); // The retrieve function is still being tested. However, it does work under certain scenarios. 
-      // I hope to resolve this bug tomorrow.
+      retrieveGarageData(); 
   }
 }
