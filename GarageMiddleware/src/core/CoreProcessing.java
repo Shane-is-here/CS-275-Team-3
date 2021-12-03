@@ -279,11 +279,16 @@ public class CoreProcessing {
                 // --  type of user so we can differentiate who is being checked
                 // --  out
                 // Use the ID to pull a User class from the DB
-                Daily dUser = DBInterface.getDaily(Integer.parseInt(ID));
+                if(Integer.parseInt(ID)<garage.getID()){
+                    Daily dUser = DBInterface.getDaily(Integer.parseInt(ID));
                 // Call checkOut method
-                double amountOwed = garage.checkOut(dUser);
+                    double amountOwed = garage.checkOut(dUser);
                 // Post info to GUI
-                GUIcheckOut(req_num, dUser, amountOwed);
+                    GUIcheckOut(req_num, dUser, amountOwed);
+                }
+                else{
+                    // Do nothing since the ID is out of the range
+                }
                 break;
             case "register":
                 LongTerm longUser = new LongTerm(garage.getID(), first, last);
