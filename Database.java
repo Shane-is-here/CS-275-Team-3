@@ -1,3 +1,4 @@
+package DatabaseInterface;
 import java.util.*; 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -167,7 +168,7 @@ public class Database {
     return toReturn; // return
   }
 
-  public static void garageSaveState(HashMap garage){
+  public static void garageSaveState(Map garage){
 
     FileWriter fw = null;
     BufferedWriter bw = null;
