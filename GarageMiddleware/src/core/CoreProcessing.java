@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.io.BufferedReader;
@@ -27,6 +28,9 @@ public class CoreProcessing {
     public static void main(String[] args) {
         System.out.println(garage.getID());
         getRequests();
+        Map<String, Integer> garageMap = garage.getGarageMap();
+        DBInterface.saveGarageSpots(garageMap);
+        
         //Daily p = DBInterface.getDaily(4);
 
     }
