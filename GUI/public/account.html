@@ -1,186 +1,375 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="page">
-        <img src="/img/city.jpg" alt="city.jpg">
-        <div class="container" id="login">
-            <a href="/index.html">
-                <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
-            </a>
-            <div class="header">
-                <h1>View account</h1>
-                <p>Please enter the following information</p>
-                <p id="login-false">Username or password not found. Please try again.</p>
-            </div>
-            <div class="footer">
-                <form class="check-in">
-                    <div>
-                        <fieldset class="side-by-side half">
-                            <input placeholder="Username" autofocus tabindex="1" type="username" id="uname" name="uname" required>
-                        </fieldset>
-                        <fieldset class="side-by-side half">
-                            <input placeholder="Password" tabindex="2" type="password" id="pass" name="pass" required>
-                        </fieldset>
-                    </div>
-                    
-                    <p class="terms">Please submit account informaiton to view account details.</p>
-                    <fieldset>
-                        <input type="button" name="submit" id="submit1" value="Pay">
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-        <div class="container" id="details">
-            <a href="/index.html">
-                <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
-            </a>
-            <div class="header">
-                <h1>Account Details</h1>
-            </div>
-            <div class="footer">
-                <div class="alert id">
-                    <div class="info">
-                        <ul>
-                            <li id="uname-display"><b>Username: </b></li>
-                            <li id="pass-display"><b>Password Length: </b></li>
-                            <li id="start-display"><b>Registration Date: </b></li>
-                            <li id="email-display"><b>Email: </b></li>
-                            <li id="payment-display"><b>Last 4 digits of Credit Card: </b></li>
-                        </ul>                        
-                    </div>
-                    <div class="spot-container">
-                        <p><b>Your spot:</b></p>
-                        <div id="spot"></div>
-                    </div>  
-                </div>
-            </div>
-        </div>
-        <div class="modal" id="mod1">
-            <div class="close">
-                <img id="close" src="/img/close-svgrepo-com.svg" alt="">
-            </div>
-            <div class="alert-container">
-                <div class="alert">
-                    <h2 >Please review your information</h2>
-                </div>
-                <div class="alert id">
-                    <div class="info">
-                        <ul>
-                            <li id="uname-review">Username: </li>
-                            <li id="pass-review">Password Length: </li>
-                        </ul>
-                        <fieldset>
-                            <input type="button" name="submit" id="submit2" class="submit" value="Continue">
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="block"></div>
-    <script>
-        // Load DOM Elements
-        let submit1 = document.getElementById('submit1');
-        let submit2 = document.getElementById('submit2');
-        let close = document.querySelector('.close');
-        let name = document.querySelector('.name');
-        let body = document.querySelector('body');
-        let login_false = document.getElementById('login-false');
-        let login = document.getElementById('login');
-        let details = document.getElementById('details');
-        let uname = document.getElementById('uname');
-        let pass = document.getElementById('pass');
-        let spot = document.getElementById('spot');
-        let block = document.querySelector('.block');
-        let h2 = document.querySelector('.h2');
-        let mod = document.getElementById('mod1');
-        let uname_review = document.getElementById('uname-review');
-        let pass_review = document.getElementById('pass-review');
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  font-family: "Poppins", sans-serif;
+}
+img {
+  /* filter: blur(2px); */
+  object-fit: cover;
+  opacity: 0.7;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+}
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  position: absolute;
+  max-width: 900px;
+  padding: 0px 20px 0px 20px;
+  min-width: 90%;
+  height: 80vh;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(180%) blur(10px);
+  -moz-backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 10px;
+}
+.header {
+  position: relative;
+  height: 50%;
+  width: 100%;
+  padding: 40px;
+  height: 30%;
+}
+h1 {
+  font-size: 36px;
+}
+.footer {
+  position: relative;
+  height: 70%;
+  width: inherit;
+  display: flex;
+  justify-content: center;
+}
+.flex {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.side {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  font-size: 12px;
+}
+#side-left {
+  border-right: 1px solid black;
+}
+#side-right {
+  border-left: 1px solid black;
+}
+.nav-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.button {
+  position: relative;
+  width: 25%;
+  height: 50px;
+  min-width: 80px;
+  background-color: #bd4f6c;
+  background-image: linear-gradient(326deg, #bd4f6c 0%, #da436b 74%);
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.button p {
+  color: black;
+  width: 90%;
+}
+.grow {
+  transition: all 0.2s ease-in-out;
+}
+.grow:hover {
+  transform: scale(1.05);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
+}
+.selector {
+  position: relative;
+  width: 500px;
+  height: 75px;
+  /* background-color: black; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #bd4f6c;
+  background-image: linear-gradient(326deg, #bd4f6c 0%, #da436b 74%);
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border: 0px solid transparent;
+  text-shadow: 0px 0px 0px transparent;
+  font-size: 24px;
+  margin: 20px;
+  cursor: pointer;
+}
+.submission {
+  width: 100px;
+  border-radius: 25px;
+  font-size: 18px;
+  height: 50px;
+  cursor: pointer;
+}
+.modal {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(180%) blur(10px);
+  -moz-backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  z-index: 1;
+  display: none;
+}
+.alert-container {
+  width: 100%;
+  height: 100%;
+}
+.alert {
+  position: relative;
+  height: 30%;
+  width: 100%;
+  padding: 50px;
+}
+.id {
+  height: 70%;
+  display: block;
+  justify-content: center;
+  font-size: 50px;
+}
 
-        // DOM Elements populated from middleware
-        let uname_display = document.getElementById('uname-display');
-        let pass_display = document.getElementById('pass-display');
-        let email_display = document.getElementById('email-display');
-        let start_display = document.getElementById('start-display');
-        let payment_display = document.getElementById('payment-display');
+.close {
+  position: absolute;
+  left: 90%;
+  top: 5%;
+  z-index: 2;
+  transition: all 0.2s ease-in-out;
+}
 
-        submit1.addEventListener('click', async () => {
-            mod.style.display = "block";
-            uname_review.innerHTML = "<b>Username: </b>" + uname.value;
-            pass_review.innerHTML = "<b>Password Length: </b>" + pass.value.length;
-        });
-
-        // On submit, verify account details. If verified, display account details, otherwise warn user.
-        submit2.addEventListener('click', async () => {
-            // UI details to indicate user must wait
-            body.style.cursor = "wait";
-            block.style.display = "block";
-            
-            
-            /* Date: YYYY/mm/dd */
-            let d = new Date();
-            let YYYY = d.getFullYear();
-            let mm = d.getMonth() + 1;
-            let dd = d.getDate();
-            let hh = d.getHours();
-            let min = d.getMinutes();
-
-            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
-
-            // Web request pacakge to post
-            const data = {
-                request: "view",
-                uname: uname.value,
-                pass: pass.value,
-                datetime: datetime
-            };
-
-            post('/api/request', data);
-
-            // Receive response from middleware about account details
-            received_data = await wait();
-
-            // If verified account
-            if(received_data.verified) {
-                details.style.display = "block";
-                mod.style.display = "none";
-                login.style.display = "none";
-
-                uname_display.innerHTML = "<b>Username: </b>" + received_data.uname;
-                pass_display.innerHTML = "<b>Password Length: </b>" + received_data.pass.length;
-                email_display.innerHTML = "<b>Email: </b>" + received_data.email;
-                start_display.innerHTML = "<b>Start Date: </b>" + received_data.start;
-                payment_display.innerHTML = "<b>Payment Option: </b>" + received_data.payment;
-                spot.innerHTML = received_data.spot;
-            }
-            // If not verified account
-            else if(!verified) {
-                login_false.style.display = "block";
-                login_false.style.color = "rgb(255,0,0)";
-            }
-            body.style.cursor = "auto";
-            block.style.display = "none";
-        });
-
-        close.addEventListener('click', async () => {
-            mod1.style.display = "none";   
-            login.style.display = "block";
-        });
-
-    </script>
-    <script src="/reqs.js"></script>
-    <script src="/script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
-</body>
-</html>
+#close {
+  cursor: pointer;
+}
+#close:hover {
+  transform: rotate(360deg);
+  animation: rot 0.35s ease-in-out;
+}
+@keyframes rot {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.info ul {
+  font-size: 12px;
+}
+.spot-container {
+  position: absolute;
+  width: 100%;
+  margin: 50px 0px 0px -50px;
+  text-align: center;
+}
+.spot-container p {
+  font-size: 12px;
+}
+.row-down {
+  flex-direction: column;
+}
+.form {
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.349);
+  width: 100px;
+  border-radius: 10px;
+  height: 30px;
+}
+.check-in {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  /* background: #f9f9f9; */
+  padding: 25px;
+  /* box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24); */
+}
+fieldset {
+  border: medium none;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+.check-in input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ccc;
+  background: #fff;
+  margin: 0 0 5px;
+  padding: 10px;
+  transition: all 0.2s ease-in-out;
+}
+input::-webkit-input-placeholder {
+  color: #888888;
+}
+input:hover {
+  background: rgb(243, 243, 243);
+}
+.submit {
+  transition: all 0.2s ease-in-out;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+#submit, #submit1, #submit2 {
+  background-color: #4caf50;
+  border: medium none;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+#submit:hover, #submit1:hover, #submit2:hover {
+  background: #46a049;
+}
+#submit:active, #submit1:active, #submit2:active {
+  box-shadow: inset rgba(100, 100, 111, 0.8) 0px 7px 29px 0px;
+}
+.block {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: none;
+  cursor: progress;
+}
+ul {
+  list-style-type: none;
+  line-height: 30px;
+}
+.terms {
+  font-size: 10px;
+  color: rgb(58, 58, 58);
+  padding: 0 20px 15px 20px;
+}
+.back {
+  fill: rgb(58, 58, 58);
+  transition: all 0.2s ease-in-out;
+}
+.back:hover {
+  fill: rgb(51, 51, 51);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+.side-by-side {
+  float: left;
+  display: inline-block;
+  padding: 0 10px 0 10px;
+}
+.third {
+  width: 33%;
+  min-width: 33%;
+}
+.half {
+  width: 50%;
+  min-width: 50%;
+}
+#sec,
+#exp {
+  width: 100%;
+}
+.h2 {
+  font-size: 24px;
+}
+#header {
+  position: relative;
+  width: 100px;
+}
+#frame {
+  position: relative;
+}
+.level {
+  left: 0;
+  top: 0;
+  display: none;
+  transition: 0.5s ease;
+}
+.cell {
+  border: 1px solid rgb(0, 0, 0);
+  min-width: 35px;
+  min-height: 35px;
+  display: inline-block;
+  margin-right: 2px;
+  transition: 0.2s ease;
+  border-radius: 3px;
+  text-align: center;
+}
+.available:hover {
+  background-color: rgb(206, 206, 206);
+  cursor: pointer;
+}
+.unavailable {
+  background-color: rgb(88, 88, 88);
+}
+#garage {
+  display: none;
+}
+#details {
+  display: none;
+}
+#login-false {
+  display: none;
+  color: red;
+}
+#login {
+  display: block;
+}
+.block {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.select-floor {
+  font-size: 12px;
+}
+.red {
+  color: red;
+  display: none;
+}
+#fail {
+  color: red;
+  display: none;
+}
+.pass2 {
+  display: none;
+}
+#pay-display {
+  height: 80vh;
+}
