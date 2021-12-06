@@ -199,7 +199,7 @@ public class Database {
 
   }
 
-  public static HashMap retrieveGarageData(){
+  public static Map retrieveGarageData(){
 
     String data = ""; // text file data
 
@@ -217,6 +217,7 @@ public class Database {
       System.out.println("An error occurred.");
       e.printStackTrace();
     }
+    data = data.substring(1, data.length()-1);
     HashMap toReturn;
 
     if(data == ""){
@@ -227,7 +228,9 @@ public class Database {
         for (int i = 0; i < pairs.length; i++) {
             String pair = pairs[i];
             String[] keyValue = pair.split("=");
-            toReturn.put(keyValue[0].replace("{", ""), keyValue[1].replace("{", ""));
+            String key = keyValue[0];
+            int value = Integer.parseInt(keyValue[1]);
+            toReturn.put(key, value);
         }
     }
     return toReturn; // return
