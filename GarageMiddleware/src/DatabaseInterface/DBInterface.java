@@ -85,7 +85,7 @@ public class DBInterface {
      * @param _garageMap
      * @return
      */
-    public boolean saveGarageSpots(Map<String, Integer> _garageMap) {
+    public static boolean saveGarageSpots(Map<String, Integer> _garageMap) {
         Database.garageSaveState(_garageMap);
         // -- we save the map into the Database, likely by deconstructing it
         // -- our return value will be whether or not the save is successful
