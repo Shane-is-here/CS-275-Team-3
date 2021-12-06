@@ -35,7 +35,7 @@
                     
                     <p class="terms">Please submit account informaiton to view account details.</p>
                     <fieldset>
-                        <input type="button" name="submit" id="submit" value="Pay">
+                        <input type="button" name="submit" id="submit1" value="Pay">
                     </fieldset>
                 </form>
             </div>
@@ -52,6 +52,7 @@
                     <div class="info">
                         <ul>
                             <li id="uname-display"><b>Username: </b></li>
+                            <li id="pass-display"><b>Password Length: </b></li>
                             <li id="start-display"><b>Registration Date: </b></li>
                             <li id="email-display"><b>Email: </b></li>
                             <li id="payment-display"><b>Last 4 digits of Credit Card: </b></li>
@@ -64,11 +65,33 @@
                 </div>
             </div>
         </div>
+        <div class="modal" id="mod1">
+            <div class="close">
+                <img id="close" src="/img/close-svgrepo-com.svg" alt="">
+            </div>
+            <div class="alert-container">
+                <div class="alert">
+                    <h2 >Please review your information</h2>
+                </div>
+                <div class="alert id">
+                    <div class="info">
+                        <ul>
+                            <li id="uname-review">Username: </li>
+                            <li id="pass-review">Password Length: </li>
+                        </ul>
+                        <fieldset>
+                            <input type="button" name="submit" id="submit2" class="submit" value="Continue">
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="block"></div>
     <script>
         // Load DOM Elements
-        let submit = document.getElementById('submit');
+        let submit1 = document.getElementById('submit1');
+        let submit2 = document.getElementById('submit2');
         let close = document.querySelector('.close');
         let name = document.querySelector('.name');
         let body = document.querySelector('body');
@@ -80,15 +103,25 @@
         let spot = document.getElementById('spot');
         let block = document.querySelector('.block');
         let h2 = document.querySelector('.h2');
+        let mod = document.getElementById('mod1');
+        let uname_review = document.getElementById('uname-review');
+        let pass_review = document.getElementById('pass-review');
 
         // DOM Elements populated from middleware
-        let uname_d = document.getElementById('uname-display');
-        let email_d = document.getElementById('email-display');
-        let start_d = document.getElementById('start-display');
-        let payment_d = document.getElementById('payment-display');
+        let uname_display = document.getElementById('uname-display');
+        let pass_display = document.getElementById('pass-display');
+        let email_display = document.getElementById('email-display');
+        let start_display = document.getElementById('start-display');
+        let payment_display = document.getElementById('payment-display');
+
+        submit1.addEventListener('click', async () => {
+            mod.style.display = "block";
+            uname_review.innerHTML = "<b>Username: </b>" + uname.value;
+            pass_review.innerHTML = "<b>Password Length: </b>" + pass.value.length;
+        });
 
         // On submit, verify account details. If verified, display account details, otherwise warn user.
-        submit.addEventListener('click', async () => {
+        submit2.addEventListener('click', async () => {
             // UI details to indicate user must wait
             body.style.cursor = "wait";
             block.style.display = "block";
@@ -117,23 +150,18 @@
             // Receive response from middleware about account details
             received_data = await wait();
 
-            let verified = false;
             // If verified account
-            if(verified) {
+            if(received_data.verified) {
                 details.style.display = "block";
+                mod.style.display = "none";
                 login.style.display = "none";
 
-                uname.innerHTML = "<b>Username: </b>" + received_data.uname;
-                email.innerHTML = "<b>Email: </b>" + received_data.email;
-                start.innerHTML = "<b>Start Date: </b>" + received_data.start;
-                payment.innerHTML = "<b>Payment Option: </b>" + received_data.payment;
+                uname_display.innerHTML = "<b>Username: </b>" + received_data.uname;
+                pass_display.innerHTML = "<b>Password Length: </b>" + received_data.pass.length;
+                email_display.innerHTML = "<b>Email: </b>" + received_data.email;
+                start_display.innerHTML = "<b>Start Date: </b>" + received_data.start;
+                payment_display.innerHTML = "<b>Payment Option: </b>" + received_data.payment;
                 spot.innerHTML = received_data.spot;
-
-//                 uname_d.innerHTML = "<b>Username: </b>" + "KevinTest";
-//                 email_d.innerHTML = "<b>Email: </b>" + "kevohoffman@icloud.com";
-//                 start_d.innerHTML = "<b>Start Date: </b>" + "11/14/2021 18:27";
-//                 payment_d.innerHTML = "<b>Payment Option: </b>" + "Card Ending in 4391";
-//                 spot.innerHTML = "3-42";
             }
             // If not verified account
             else if(!verified) {
@@ -142,6 +170,11 @@
             }
             body.style.cursor = "auto";
             block.style.display = "none";
+        });
+
+        close.addEventListener('click', async () => {
+            mod1.style.display = "none";   
+            login.style.display = "block";
         });
 
     </script>
