@@ -12,38 +12,46 @@
 </head>
 <body>
     <div class="page">
-        <div class="modal">
+        <div class="modal" id="mod1">
             <div class="close">
                 <img id="close" src="/img/close-svgrepo-com.svg" alt="">
             </div>
             <div class="alert-container">
                 <div class="alert">
-                    <h2>Your account has been successfully registered!</h2>
+                    <h2 class="pass1">Please review your information</h2>
+                    <h2 class="pass2">Your account has been successfully registered!</h2>
                 </div>
                 <div class="alert id">
                     <div class="info">
                         <ul>
-                            <li class="uname"><b>Username</b></li>
-                            <li class="start"><b>Registration Date: </b></li>
-                            <li class="email"><b>Email: </b></li>
+                            <li id="uname-display">Username: </li>
+                            <li id="pass-display">Password: </li>
+                            <li id="email-display">Email: </li>
+                            <li id="cnum-display">CC Num: </li>
+                            <li id="exp-sec-zip-display">Exp Date: </li>
                         </ul>                        
                     </div>
+                    <fieldset class="pass1">
+                        <input type="button" name="submit" id="submit2" class="submit" value="Continue">
+                    </fieldset>
                     <div class="spot-container">
-                        <p><b>Your spot:</b></p>
-                        <div id="spot"></div>
-                    </div>  
+                        <p class="pass2">Spot:</p>
+                        <div class="pass2 spot"></div>
+                    </div>
                 </div>
             </div>
         </div>
         <img src="/img/city.jpg" alt="city.jpg">
-        <div class="container" id="form">
+        <div class="container" id="origin">
             <a href="/index.html">
                 <svg class="back" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm0 1c6.071 0 11 4.929 11 11s-4.929 11-11 11-11-4.929-11-11 4.929-11 11-11zm-4.828 11.5l4.608 3.763-.679.737-6.101-5 6.112-5 .666.753-4.604 3.747h11.826v1h-11.828z"/></svg>
             </a>
             <div class="header">
                 <h1>Register an account</h1>
                 <p>Please enter the following information</p>
-                <p id="fail">Failed to receive data. Please try again.</p>
+                <p class="red" id="fail">Failed to receive data. Please try again.</p>
+                <p class="red" id="login-false">There is no garage availability at this time. Sorry for the inconvenience.</p>
+                <p class="red" id="login-id">Username already taken. Please input a different username.</p>
             </div>
             <div class="footer">
                 <form class="check-in">
@@ -75,7 +83,7 @@
                     
                     <p class="terms">This payment only accounts for the duration stayed in increments of half-hours, rounded down.</p>
                     <fieldset>
-                        <input type="button" name="submit" id="submit" value="Pay">
+                        <input type="button" name="submit" id="submit1" value="Pay">
                     </fieldset>
                 </form>
             </div>
@@ -90,6 +98,8 @@
             <div class="footer">
                 <div id="frame">
                     <h2 id="counter">Level: </h2>
+                    <h4 id="spots-available">Spots Available:</h4>
+                    <h4 id="spots-unavailable">Spots Unavailable:</h4>
                 </div>
                 <div class="selection">
                     <button class="select-floor" onclick="nextFloor()">Level Up</button>
@@ -100,38 +110,50 @@
     </div>
     <div class="block"></div>
     <script>
-        // Load DOM Elements
-        let submit = document.getElementById('submit');
+        let submit = document.getElementById('submit1');
+        let submit2 = document.getElementById('submit2');
+        let spot = document.querySelector('.spot');
         let close = document.querySelector('.close');
-        let uname_block = document.querySelector('.uname');
-        let email_block = document.querySelector('.email');
-        let start = document.querySelector('.start');
+        let fail = document.getElementById('fail');
+        let login_false = document.getElementById('login-false');
+        let login_id = document.getElementById('login-id');
+
+        // User check block
+        let block = document.querySelector('.block');
+        let origin = document.getElementById('origin');
+        let mod1 = document.getElementById('mod1');
+        let mod2 = document.getElementById('mod2');
+        let h2 = document.querySelector('h2');
+        let id = document.getElementById('id');
+
+        let uname_display = document.getElementById('uname-display');
+        let pass_display = document.getElementById('pass-display');
+        let email_display = document.getElementById('email-display');
+        let cnum_display = document.getElementById('cnum-display');
+        let exp_sec_zip_display = document.getElementById('exp-sec-zip-display');
+        
+        // Form block
         let uname = document.getElementById('uname');
         let pass = document.getElementById('pass');
+        let email = document.getElementById('email');
         let cnum = document.getElementById('cnum');
-        let exp = document.getElementById('exp');
         let sec = document.getElementById('sec');
         let zip = document.getElementById('zip');
-        let email = document.getElementById('email');
-        let mod = document.querySelector('.modal');
-        let h2 = document.querySelector('.h2');
-        let form = document.getElementById('form');
         let garage = document.getElementById('garage');
-        let spot = document.getElementById('spot');
-        let block = document.querySelector('.block');
-        let fail = document.getElementById('fail');
-    </script>
-    <script>
 
-        // Initialize post data
-        var data = {}
+        let pass1 = document.querySelectorAll('.pass1');
+        let pass2 = document.querySelectorAll('.pass2');
 
-        // On sumbission of account details for registration
+        let num_available = [];
+        let total_spots = []
+
+        let data = {}
+
         submit.addEventListener('click', async () => {
-            // UI details to indicate user must wait
+            
             block.style.display = "block";
             
-            /* Datetime: YYYY/MM/DD/hh/mm */
+            /* Date: YYYY/mm/dd */
             let d = new Date();
             let YYYY = d.getFullYear();
             let mm = d.getMonth() + 1;
@@ -139,77 +161,114 @@
             let hh = d.getHours();
             let min = d.getMinutes();
 
-            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + mm;
+            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
 
-            // Populate post data
-            var req_gar = {
+            let gar_request = {
                 request: "garage",
             };
 
-            post('/api/request', req_gar);
+            post('/api/request', gar_request);
 
+            data = {
+                request: "checkin",
+                uname: uname.value,
+                pass: pass.value,
+                email: email.value,
+                cnum: cnum.value,
+                sec: sec.value,
+                exp: exp.value,
+                start_time: datetime
+            }
 
-            try {
-                form.style.display =  "none";
-                garage.style.display =  "block";
-                fail.style.display = "none";
-                
-                let received_data = await wait();
+            fail.style.display = "none";
+            login_false.style.display = "none";
 
-                // Temporary data
-                let gar_data = received_data;
-                delete gar_data['req_num'];
-                delete gar_data['request'];
-                delete gar_data['hasSpot'];
-                console.log(gar_data);
+            let received_data = await wait();
 
-
-                data = {
-                    request: "register",
-                    uname: uname.value,
-                    pass: pass.value,
-                    datetime: datetime,
-                    cnum: cnum.value
-                };
-                // Build garage
-                garageSetup(gar_data);
-                block.style.display = "none";
-
-                if(Object.keys(gar_data).length === 0) {
-                    form.style.display =  "block";
-                    garage.style.display =  "none";
+            if(Object.keys(received_data).length == 0) {
+                    mod1.style.display =  "none";
                     fail.style.display = "block";
-                }   
-            } catch {
-                form.style.display =  "block";
-                garage.style.display =  "none";
+                    login_false.style.display = "none";
+                    origin.style.display = "block";
+                } 
+            else if(Object.keys(received_data).length > 0) {
+                garage.style.display = "block";
+                mod1.style.display =  "none";
+                fail.style.display = "none";
+                origin.style.display = "none";
+
+                num_available = received_data['spotsOpen'];
+
+                makeGarage(received_data);
+                uname_display.innerHTML = "<b>Username: </b>" + uname.value;
+                pass_display.innerHTML = "<b>Password Length: </b>" + pass.value.length;
+                email_display.innerHTML = "<b>Email: </b>" + email.value;
+                cnum_display.innerHTML = "<b>CC Num: </b>" + cnum.value;
+                exp_sec_zip_display.innerHTML = "<b>Exp Date: </b>" + exp.value + "<b> CCV: </b>" + sec.value + "<b> Zip: </b>" + zip.value;
+            }
+
+            block.style.display = "none";
+        });
+
+        submit2.addEventListener('click', async () => {
+            block.style.display = "block";
+            
+            post('/api/request', data);
+
+            let received_data = await wait();
+
+            if (Object.keys(received_data).length == 0) {
                 fail.style.display = "block";
-            } 
+                mod1.style.display = "none";   
+                pass1.forEach(el => el.style.display = "block");
+                submit2.style.display = "block";
+                pass2.forEach(el => el.style.display = "none");
+                let levelsQ = document.querySelectorAll(".level");
+                levelsQ.forEach(el => el.remove());
+                origin.style.display = "block";
+
+            } else if(received_data.taken){
+                login_id.style.display = "block";
+                mod1.style.display = "none";   
+                pass1.forEach(el => el.style.display = "block");
+                submit2.style.display = "block";
+                pass2.forEach(el => el.style.display = "none");
+                let levelsQ = document.querySelectorAll(".level");
+                levelsQ.forEach(el => el.remove());
+                origin.style.display = "block";
+            } else {
+                pass1.forEach(el => el.style.display = "none");
+                submit2.style.display = "none";
+                pass2.forEach(el => el.style.display = "block");
+            }
+
+            block.style.display = "none";
         });
 
         close.addEventListener('click', async () => {
-            let mod = document.querySelector('.modal');
-            mod.style.display = "none";    
-
-            fetch('/api/request?req_num=1')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-            window.location.href = "/index.html";
+            mod1.style.display = "none";   
+            pass1.forEach(el => el.style.display = "block");
+            submit2.style.display = "block";
+            pass2.forEach(el => el.style.display = "none");
+            let levelsQ = document.querySelectorAll(".level");
+            levelsQ.forEach(el => el.remove());
+            origin.style.display = "block";
         });
 
     </script>
+    <script src="/script.js"></script>
+    <script src="/reqs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         // Load DOM elements
         const frame = document.getElementById("frame");
         const footer = document.getElementById("footer");
+        
         let levels = document.getElementsByClassName("level");
         let rows = document.getElementsByClassName("gridRow");
         let cells = document.getElementsByClassName("cell");
+        let spots_available = document.getElementById("spots-available");
+        let spots_unavailable = document.getElementById("spots-unavailable");
         var floor = 0;
 
         // Converts data from middleware into more accessible data structure
@@ -226,31 +285,35 @@
             return formatted_data;
         }
 
-        // Builds garage DOM elements
-        async function garageSetup(gar_data) {
-            //Sets important constants and variables
-
-            formatted_data = formatData(gar_data);
-
-            makeGarage(formatted_data);
-        }
-
         // Constructs rows and cells within rows
-        function makeGarage(formatted_data) {
-
+        function makeGarage(received_data) {
             let counter = document.getElementById("counter");
+            let gar_data = received_data;
+            delete gar_data['request'];
+            delete gar_data['req_num'];
+            delete gar_data['hasSpot'];
+            delete gar_data['spotsOpen'];
+
+            let formatted_data = formatData(gar_data);
+
             counter.innerHTML = "Level: " + floor;
             max_spots = -1;
+
             for(const value1 of Object.values(formatted_data)) {
                 spots = Object.keys(value1);
                 if(spots.length > max_spots) {
-                    max_spots = spots;
+                    max_spots = spots.length;
+                    
                 }
+                total_spots.push(spots.length);
             }
 
+            
+            if(max_spots == -1) {
+                max_spots = 10
+            }
 
-            // let n = Math.ceil(Math.sqrt(max_spots));
-            let n = Math.ceil(Math.sqrt(10));
+            let n = Math.ceil(Math.sqrt(max_spots));
 
             for(const [key, value2] of Object.entries(formatted_data)) {
                 let level = document.createElement("div");
@@ -259,6 +322,8 @@
             }
 
             levels[floor].style.display = "block";
+            spots_available.innerHTML = "Spots Available: " + num_available[floor];
+            spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
         }
 
         // Creates a default grid sized nxn 
@@ -296,6 +361,8 @@
             if(floor < levels.length-1) {
                 levels[floor].style.display = "none";
                 floor = floor + 1;
+                spots_available.innerHTML = "Spots Available: " + num_available[floor];
+                spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }
@@ -305,6 +372,8 @@
             if(floor > 0) {
                 levels[floor].style.display = "none";
                 floor = floor - 1;
+                spots_available.innerHTML = "Spots Available: " + num_available[floor];
+                spots_unavailable.innerHTML = "Spots Unvailable: " + (total_spots[floor]-num_available[floor]);
                 levels[floor].style.display = "block";
                 counter.innerHTML = "Level: " + floor;
             }  
@@ -316,17 +385,9 @@
 
             data.spot = floor + "-" + el;
 
-            post('/api/request', data);
+            mod1.style.display = "block";
 
-            mod.style.display = "block";
-
-            console.log(data);
-
-            dates = data.datetime.split('/');
-
-            uname_block.innerHTML = "<b>Username: </b>" + data.uname;
-            start.innerHTML = "<b>Registration Date: </b>" + dates[1] + '/' + dates[2] + '/' + dates[0];
-            email_block.innerHTML = "<b>Email: </b>" + data.email;
+            // start.innerHTML = start_display.innerHTML
             spot.innerHTML = "<b>" + floor + "-" + el + "</b>";
         }
     </script>
