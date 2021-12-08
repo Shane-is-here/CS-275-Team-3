@@ -9,8 +9,11 @@ import users.*;
 import java.util.HashMap;
 import java.util.Map;
 import DatabaseInterface.*;
+import java.text.NumberFormat;
+import java.util.Locale;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+
 
 /**
  *
@@ -76,8 +79,8 @@ public class Garage {
         return this._idToSave;
     }
     
-    public String getRateMessage() {
-
+    public static String getRateMessage() {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
         String rateMessage = "You are being charged " + DAILYRATE + " per 24 hours and"
                 + HOURLYRATE + " per hour over 24";
 
