@@ -51,17 +51,18 @@
                 <p>Please enter your information below...</p>
                 <p id="fail">Failed to receive data. Please try again.</p>
                 <p id="login-false">There is no garage availability at this time. Sorry for the inconvenience.</p>
+                <p id="login-empty">Please fill in all fields.</p>
             </div>
             <div class="footer">
                 <form class="check-in">
                     <fieldset>
-                        <input placeholder="First name" autofocus tabindex="1" type="text" id="fname" name="fname" required>
+                        <input placeholder="First name" autofocus tabindex="1" type="text" id="fname" name="fname">
                     </fieldset>
                     <fieldset>
-                        <input placeholder="Last name" tabindex="2" type="text" id="lname" name="lname" required>
+                        <input placeholder="Last name" tabindex="2" type="text" id="lname" name="lname">
                     </fieldset>
                     <fieldset>
-                        <input placeholder="Phone number" tabindex="3" type="tel" id="pnum" name="pnum" required>
+                        <input placeholder="Phone number" tabindex="3" type="tel" id="pnum" name="pnum">
                     </fieldset>
                     <p class="terms">This garage's short-term payment option charges by the half-hour. Each half-hour, you will be charged an additional $5 will. Your payment will be processed during check-out. Thank you and enjor your stay.</p>
                     <fieldset>
@@ -98,6 +99,7 @@
         let close = document.querySelector('.close');
         let fail = document.getElementById('fail');
         let login_false = document.getElementById('login-false');
+        let login_empty = document.getElementById('login-empty');
 
         // User check block
         let block = document.querySelector('.block');
@@ -129,9 +131,20 @@
 
         let data = {}
 
+        let inputs = [fname, lname, pnum];
+        
+        function isEmpty(input) {
+            return input.value.length == 0;
+        }
+
         submit.addEventListener('click', async () => {
-            
-            block.style.display = "block";
+            console.log(inputs[1].value.length);
+            if(inputs.some(isEmpty)) {
+                login_empty.style.display = "block";
+            } else {
+                login_empty.style.display = "none";
+                
+                block.style.display = "block";
             
             /* Date: YYYY/mm/dd */
             let d = new Date();
@@ -183,6 +196,7 @@
             }
 
             block.style.display = "none";
+            } 
         });
 
         submit2.addEventListener('click', async () => {
