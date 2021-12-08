@@ -27,20 +27,8 @@ public class CoreProcessing {
     public static void main(String[] args) {
         System.out.println(garage.getID());
         getRequests();
-        //postGarage("1");
         Map<String, Integer> garageMap = garage.getGarageMap();
-        /*for(Object key: garageMap.keySet()){
-            System.out.println(key + ":"
-                    + garageMap.get(key));
-        }
-        int open = garageMap.get("0-3");
-        //String key  = "0-3";
-        //System.out.println(garageMap.get(key).getClass());
-        //String openS = garageMap.get("0-3");
-        System.out.println(garageMap.get("0-3"));
         DBInterface.saveGarageSpots(garageMap);
-        
-        //Daily p = DBInterface.getDaily(4);*/
 
     }
 
