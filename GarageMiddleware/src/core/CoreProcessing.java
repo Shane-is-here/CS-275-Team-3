@@ -4,7 +4,6 @@ import users.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.net.URL;
 import java.net.HttpURLConnection;
@@ -28,10 +27,20 @@ public class CoreProcessing {
     public static void main(String[] args) {
         System.out.println(garage.getID());
         getRequests();
+        //postGarage("1");
         Map<String, Integer> garageMap = garage.getGarageMap();
+        /*for(Object key: garageMap.keySet()){
+            System.out.println(key + ":"
+                    + garageMap.get(key));
+        }
+        int open = garageMap.get("0-3");
+        //String key  = "0-3";
+        //System.out.println(garageMap.get(key).getClass());
+        //String openS = garageMap.get("0-3");
+        System.out.println(garageMap.get("0-3"));
         DBInterface.saveGarageSpots(garageMap);
         
-        //Daily p = DBInterface.getDaily(4);
+        //Daily p = DBInterface.getDaily(4);*/
 
     }
 
@@ -283,14 +292,13 @@ public class CoreProcessing {
                 // --  type of user so we can differentiate who is being checked
                 // --  out
                 // Use the ID to pull a User class from the DB
-                if(Integer.parseInt(ID)<garage.getID()){
+                if (Integer.parseInt(ID) < garage.getID()) {
                     Daily dUser = DBInterface.getDaily(Integer.parseInt(ID));
-                // Call checkOut method
+                    // Call checkOut method
                     double amountOwed = garage.checkOut(dUser);
-                // Post info to GUI
+                    // Post info to GUI
                     GUIcheckOut(req_num, dUser, amountOwed);
-                }
-                else{
+                } else {
                     // Do nothing since the ID is out of the range
                 }
                 break;
@@ -336,24 +344,23 @@ public class CoreProcessing {
             var objectMapper = new ObjectMapper();
             int reqInt = Integer.parseInt(req_num);
 
-            
             String postString = "{\"request\":\"garage\",\"req_num\":" + reqInt + ","
                     + "\"hasSpot\":\"true\",";
 
-            String garageBody;
-            garageBody = objectMapper.writeValueAsString(garage.getGarageMap());
-            System.out.println(garageBody);
+            String garageBody = objectMapper.writeValueAsString(garage.getGarageMap());
+            //System.out.println(garageBody);
             postString = postString + garageBody.substring(1);
+            //System.out.println(garage.getOpenSpots());
             String garageSpots = objectMapper.writeValueAsString(garage.getOpenSpots());
-            postString = postString.substring(0, postString.length()-1);
+            postString = postString.substring(0, postString.length() - 1);
             postString = postString + ",\"spotsOpen\":[";
-            postString = postString + garageSpots.substring(1,garageSpots.length()-1);
+            postString = postString + garageSpots.substring(1, garageSpots.length() - 1);
             postString = postString + "]}";
             System.out.println(postString);
 
             r.postRequest(postString);
         } catch (Exception e) {
-
+            System.out.println(e);
         }
 
     }
@@ -397,9 +404,6 @@ public class CoreProcessing {
 
     }
 
-    
-    
-    
     public static void sendToGUI(LongTerm p) {
 
     }
