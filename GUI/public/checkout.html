@@ -68,6 +68,7 @@
                 <h1>Thank you for staying</h1>
                 <p>Please enter your ID and payment option</p>
                 <p id="fail">Failed to receive data. Please try again.</p>
+                <p id="login-empty">Please fill in all fields.</p>
             </div>
             <div class="footer">
                 <form class="check-in">
@@ -100,49 +101,56 @@
         let pass1 = document.querySelectorAll('.pass1');
         let pass2 = document.querySelectorAll('.pass2');
         let submit2 = document.getElementById('submit2');
+        let login_empty = document.getElementById('login-empty');
+
 
         submit.addEventListener('click', async () => {
+            if(id.value.length == 0) {
+                login_empty.style.display = "block";
+            }
+            else {
+                login_empty.style.display = "none";
+                block.style.display = "block";
             
-            block.style.display = "block";
-            
-            /* Date: YYYY/mm/dd */
-            let d = new Date();
-            let YYYY = d.getFullYear();
-            let mm = d.getMonth() + 1;
-            let dd = d.getDate();
-            let hh = d.getHours();
-            let min = d.getMinutes();
+                /* Date: YYYY/mm/dd */
+                let d = new Date();
+                let YYYY = d.getFullYear();
+                let mm = d.getMonth() + 1;
+                let dd = d.getDate();
+                let hh = d.getHours();
+                let min = d.getMinutes();
 
-            let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
+                let datetime = YYYY + "/" + mm + "/" + dd + "/" + hh + "/" + min;
 
-            let data = {
-                request: "checkout",
-                ID: id.value,    
-            };
+                let data = {
+                    request: "checkout",
+                    ID: id.value,    
+                };
 
-            post('/api/request', data);
+                post('/api/request', data);
 
-            try {
-                fail.style.display = "none";
+                try {
+                    fail.style.display = "none";
 
-                let received_data = await wait();
+                    let received_data = await wait();
 
-                mod.style.display =  "block";
-                if(Object.keys(received_data).length === 0) {
+                    mod.style.display =  "block";
+                    if(Object.keys(received_data).length === 0) {
+                        mod.style.display =  "none";
+                        fail.style.display = "block";
+                    }
+                    payment.innerHTML = "<b>$" + received_data.amount_owed + "</b>";
+                    name.innerHTML = "<b>Full name: </b>" + received_data.first + " " + received_data.last;
+                    start.innerHTML = "<b>Start Time: </b>" + received_data.start_time;
+                    finish.innerHTML = "<b>End Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
+                    rate.innerHTML = received_data.rateMessage;
+                } catch {
                     mod.style.display =  "none";
                     fail.style.display = "block";
                 }
-                payment.innerHTML = "<b>$" + received_data.amount_owed + "</b>";
-                name.innerHTML = "<b>Full name: </b>" + received_data.first + " " + received_data.last;
-                start.innerHTML = "<b>Start Time: </b>" + received_data.start_time;
-                finish.innerHTML = "<b>End Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
-                rate.innerHTML = received_data.rateMessage;
-            } catch {
-                mod.style.display =  "none";
-                fail.style.display = "block";
+                
+                block.style.display = "none";
             }
-            
-            block.style.display = "none";
         });
 
         submit2.addEventListener('click', async () => {
