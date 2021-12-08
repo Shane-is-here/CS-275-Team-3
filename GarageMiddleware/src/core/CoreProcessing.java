@@ -284,6 +284,8 @@ public class CoreProcessing {
                     Daily dUser = DBInterface.getDaily(Integer.parseInt(ID));
                     // Call checkOut method
                     double amountOwed = garage.checkOut(dUser);
+                    
+                    String rateMessage = garage.getRateMessage();
                     // Post info to GUI
                     GUIcheckOut(req_num, dUser, amountOwed);
                 } else {
