@@ -32,6 +32,7 @@
                             <li class="name">Full Name: </li>
                             <li class="start">Start Time: </li>
                             <li class="finish">End Time: </li>
+                            <li class="rate"></li>
                         </ul>
                         <form class="check-in pass1">
                             <fieldset>
@@ -88,6 +89,7 @@
         let name = document.querySelector('.name');
         let start = document.querySelector('.start');
         let finish = document.querySelector('.finish');
+        let rate = document.querySelector('.rate');
         let id = document.getElementById('id');
         let cnum = document.getElementById('cnum');
         let exp = document.getElementById('exp');
@@ -134,6 +136,7 @@
                 name.innerHTML = "<b>Full name: </b>" + received_data.first + " " + received_data.last;
                 start.innerHTML = "<b>Start Time: </b>" + received_data.start_time;
                 finish.innerHTML = "<b>End Time: </b>" + String(mm).padStart(2,'0') + "/" + String(dd).padStart(2,'0') + "/" + YYYY + " " + String(hh).padStart(2,'0') + ":" + String(min).padStart(2,'0');
+                rate.innerHTML = received_data.rateMessage;
             } catch {
                 mod.style.display =  "none";
                 fail.style.display = "block";
@@ -148,7 +151,7 @@
             pass1.forEach(el => el.style.display = "none");
             submit2.style.display = "none";
             pass2.forEach(el => el.style.display = "block");
-
+            
             block.style.display = "none";
         });
 
