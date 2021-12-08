@@ -75,6 +75,14 @@ public class Garage {
     public int getID() {
         return this._idToSave;
     }
+    
+    public String getRateMessage() {
+
+        String rateMessage = "You are being charged " + DAILYRATE + " per 24 hours and"
+                + HOURLYRATE + " per hour over 24";
+
+        return rateMessage;
+    }
 
     private void setSpotsOpen() {
         int spotOpenPerFloor = 0;
