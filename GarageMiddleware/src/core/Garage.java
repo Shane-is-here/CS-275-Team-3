@@ -39,12 +39,11 @@ public class Garage {
     private final int SPOTTAKEN = 1;
 
     public Garage(int floors, int spots) {
-       
+
         // -- these are how many spots and floors we have
         _floors = floors;
         _spots = spots;
-        
-       
+
         _idToSave = _mostRecentID + 1;
         // -- this is the map keeping track of spots from the garage
         Map<String, Integer> _garageMapFromDB = dbInterface.getGarageSpots();
@@ -52,7 +51,6 @@ public class Garage {
         // -- in case we cannot get information from the database
         // -- or we return an empty map
         // -- we set all of the spots to empty
-        
         if (_garageMapFromDB.isEmpty()) {
 
             for (int i = 0; i < _floors; i++) {
@@ -69,13 +67,12 @@ public class Garage {
 
             _garageMap.putAll(_garageMapFromDB);
         }
-        
-        _openSpots = new int[_floors]; 
-        
-        
+
+        _openSpots = new int[_floors];
+
     }
 
-public int getID() {
+    public int getID() {
         return this._idToSave;
     }
 
@@ -83,25 +80,26 @@ public int getID() {
         int spotOpenPerFloor = 0;
         String floorSpace;
         for (int i = 0; i < _floors; i++) {
-            for (int j = 0; j < _spots; j++) {
-                floorSpace = turnSpotToKey(i,j); 
-                if(_garageMap.get(floorSpace)==0){
+            for (int j = 0; j < _spots - 1; j++) {
+                floorSpace = turnSpotToKey(i, j);
+                if (_garageMap.get(floorSpace) == 0) {
                     spotOpenPerFloor++;
                 }
             }
-            _openSpots[i]= spotOpenPerFloor;
+            _openSpots[i] = spotOpenPerFloor;
+            spotOpenPerFloor = 0;
         }
-        
+
     }
-    
-    private void adjustSpotsOpen(boolean isCheckingIn, String floorSpot){
-        
+
+    private void adjustSpotsOpen(boolean isCheckingIn, String floorSpot) {
+
         int firstDash = floorSpot.indexOf("-");
-        String floor = floorSpot.substring(0,firstDash);
+        String floor = floorSpot.substring(0, firstDash);
         int intFloor = Integer.parseInt(floor);
-        if (isCheckingIn){
+        if (isCheckingIn) {
             _openSpots[intFloor]++;
-        } else{
+        } else {
             _openSpots[intFloor]--;
         }
     }
@@ -158,7 +156,7 @@ public int getID() {
         boolean isCheckingIn = true;
         p.setID(_idToSave);
         _idToSave++;
-        
+
         // -- we set the spot through the interface 
         // -- so we get it here from the user class
         String userSpot = p.getSpot();
@@ -166,14 +164,14 @@ public int getID() {
         // -- and also sets the spot chosen as taken
         canCheckIn = assignSpotInMap(userSpot);
         // -- we try to get a spot using create spot
-        
+
         // -- we next adjust the number of spots that are open on the floor
-        adjustSpotsOpen(isCheckingIn,p.getSpot());
-        
+        adjustSpotsOpen(isCheckingIn, p.getSpot());
+
         // if check in was successful we let the caller know
         // -- so we return true or false
         this.dbInterface.saveUser(p);
-        
+
         car_count++;
         return canCheckIn;
     }
@@ -204,8 +202,8 @@ public int getID() {
         // -- and generate their payment
         amountOwed = generatePayment(dailyUser);
 
-        adjustSpotsOpen(isCheckingIn,dailyUser.getSpot());
-        
+        adjustSpotsOpen(isCheckingIn, dailyUser.getSpot());
+
         toReturn = amountOwed;
         return toReturn;
     }
@@ -391,12 +389,14 @@ public int getID() {
 
         return numSpotsEmpty;
     }
-    
+
     /**
      * returns the number of spots open per floor
-     * @return 
+     *
+     * @return
      */
-    public int[] getOpenSpots(){
+    public int[] getOpenSpots() {
+        setSpotsOpen();
         return _openSpots;
     }
 
@@ -411,12 +411,12 @@ public int getID() {
 
         }
     }
-    
+
     public static void main(String[] args) {
         Daily me = new Daily(1, "hi", "lo");
         me.setTimeIn("2020/11/18/06/01");
         double payment = generatePayment(me);
         System.out.println(payment);
     }
-     
+
 }
