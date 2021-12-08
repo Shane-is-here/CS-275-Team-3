@@ -50,11 +50,13 @@ public class Time {
         
         // -- we extract all of the relavant information and store it in
         // -- relevant strings
-        String yearString = timeString.substring(0,3);
-        String monthString = timeString.substring(5,6);
-        String dayString = timeString.substring(8,9);
-        String hourString = timeString.substring(11,12);
-        String minString = timeString.substring(14,15);
+        
+        String[] dates = timeString.split("/");
+        String yearString = dates[0];
+        String monthString = dates[1];
+        String dayString = dates[2];
+        String hourString = dates[3];
+        String minString = dates[4];
         
         // -- we then convert these strings into integers
         dateInt = setIntTime(yearString, monthString, dayString, hourString, minString);
@@ -94,14 +96,6 @@ public class Time {
         return intParsed;
     }
     
-    
-    
-    
-   
    
     
-    public String getStringDate(){
-        String toReturn = this._timeString;
-        return toReturn;
-    }
 }
